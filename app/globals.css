@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --color-text: #f8f9f9;
+  --color-text-muted: #a1a1aa;
+  --color-background: #101220;
+  --color-muted: #2b2836;
+  --color-primary: #90acdd;
+  --color-secondary: #832969;
+  --color-accent: #4dd2d2;
+  --font-rubik: var(--font-rubik);
+  --font-days-one: var(--font-days-one);
+}
+* {
+  @apply font-rubik font-medium;
+}
+body {
+  @apply bg-background text-text;
+}
+@utility no-ring {
+  @apply outline-none ring-0 ring-offset-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-offset-0;
+}
+@utility input-ring {
+  @apply h-8 rounded-none border-none  bg-transparent outline-none ring-offset-0 focus:ring-1  focus:ring-accent focus:ring-offset-0 focus-visible:ring-offset-0;
+}
+@utility right-menu-context {
+  @apply flex w-80 flex-col gap-y-1 border-none bg-muted py-4 text-text;
+}
+@utility right-menu-item {
+  @apply flex justify-between px-3 py-2 hover:bg-muted;
+}
