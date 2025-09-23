@@ -19,6 +19,7 @@ import {
 } from "@/lib/canvas";
 import { DEFAULT_FULL_COLOR } from "@/lib/shapes";
 import { useMutation, useStorage } from "@liveblocks/react/suspense";
+import { defaultNavElement } from "@/constants";
 
 export default function Home() {
   /**
@@ -104,8 +105,25 @@ export default function Home() {
     value: "",
     icon: "",
   });
+  const deleteAllShapes = useMutation(({ storage }) => {
+    const canvasObjects = storage.get("canvasObjects");
+    if (!canvasObjects || canvasObjects.size === 0) return true;
+    for (const [key, value] of canvasObjects.entries()) {
+      canvasObjects.delete(key);
+    }
+    return canvasObjects.size === 0;
+  }, []);
   const handleActiveElement = (element: ActiveElement) => {
     setActiveElement(element);
+    switch (element?.value) {
+      case "reset":
+        deleteAllShapes();
+        //Clear the Canvas
+        fabricRef.current?.clear();
+        setActiveElement(defaultNavElement);
+        //Delete all objects from the canvas and storage
+        break;
+    }
     selectedShapeRef.current = element?.value as string;
   };
   /**
