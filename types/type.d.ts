@@ -1,29 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BaseUserMeta, User } from "@liveblocks/client";
 import { FabricObject, GradientType, Pattern } from "fabric";
+import React from "react";
 
-export enum CursorMode {
-  Hidden,
-  Chat,
-  ReactionSelector,
-  Reaction,
-}
-export type CursorState =
-  | {
-      mode: CursorMode.Hidden;
-    }
-  | {
-      mode: CursorMode.Chat;
-      message: string;
-      previousMessage: string | null;
-    }
-  | {
-      mode: CursorMode.ReactionSelector;
-    }
-  | {
-      mode: CursorMode.Reaction;
-      reaction: string;
-      isPressed: boolean;
-    };
 export type Reaction = {
   value: string;
   timestamp: number;
@@ -65,7 +44,31 @@ export interface CustomFabricObject<T extends FabricObject> extends FabricObject
   objectId?: string;
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Presence = any;
+export interface CustomFabricObject<T extends fabric.Object> extends fabric.Object {
+  objectId?: string;
+}
 export type LiveCursorProps = {
   others: readonly User<Presence, BaseUserMeta>[];
 };
+export type CanvasMouseDown = {
+  options: IEvent;
+  canvas: Canvas;
+  isDrawing: React.MutableRefObject<boolean>;
+  selectedShapeRef: any;
+  shapeRef: any;
+};
+
+export type CanvasMouseUp = {
+  canvas: Canvas;
+  isDrawing: React.MutableRefObject<boolean>;
+  shapeRef: any;
+  activeObjectRef: React.MutableRefObject<FabricObject | null>;
+  selectedShapeRef: any;
+  syncShapeInStorage: (shape: FabricObject) => void;
+  setActiveElement: React.Dispatch<React.SetStateAction<ActiveElement>>;
+};
+// options: fabric.IEvent;
+//   canvas: fabric.Canvas;
+//   selectedShapeRef: any;
+//   isDrawing: React.MutableRefObject<boolean>;
+//   shapeRef: React.MutableRefObject<fabric.Object | null>;

@@ -7,13 +7,16 @@ import {
   useMyPresence,
   useOthers,
 } from "@liveblocks/react/suspense";
-import { CursorMode, CursorState, Reaction, ReactionEvent } from "@/types/type";
 import useInterval from "@/hooks/useInterval";
 import FlyingReaction from "./reaction/FlyingReaction";
 import CursorChat from "./cursor/CursorChat";
 import ReactionSelector from "./reaction/ReactionSelector";
-
-const Live = () => {
+import { CursorMode, CursorState } from "@/types/types";
+import { Reaction, ReactionEvent } from "@/types/type";
+type Props = {
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
+};
+const Live = ({ canvasRef }: Props) => {
   const others = useOthers();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [{ cursor }, updateMyPresence] = useMyPresence() as any;
@@ -138,15 +141,17 @@ const Live = () => {
     );
   };
   return (
-    <div
+    <section
+      id="canvas"
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
-      className="h-[100vh] w-full flex justify-center items-center text-center"
+      className="relative flex h-full w-full flex-1 items-center justify-center"
       style={{ cursor: state.mode === CursorMode.Chat ? "none" : "" }}
     >
-      <h1 className="text-2xl">LiveBlocks Figma Clone</h1>
+      <canvas ref={canvasRef} />
+
       {reactions.map((reaction) => {
         return (
           <FlyingReaction
@@ -186,7 +191,7 @@ const Live = () => {
       )}
 
       <LiveCursors others={others} />
-    </div>
+    </section>
   );
 };
 

@@ -3,11 +3,12 @@
 @theme {
   --color-text: #f8f9f9;
   --color-text-muted: #a1a1aa;
-  --color-background: #101220;
-  --color-muted: #2b2836;
+  --color-background: #0a0b13;
+  --color-muted: #14121d;
   --color-primary: #90acdd;
   --color-secondary: #832969;
   --color-accent: #4dd2d2;
+  --color-default-fill: #d9d9d9;
   --font-rubik: var(--font-rubik);
   --font-days-one: var(--font-days-one);
 }
@@ -28,4 +29,52 @@ body {
 }
 @utility right-menu-item {
   @apply flex justify-between px-3 py-2 hover:bg-muted;
+}
+@utility avatar {
+  @apply flex place-content-center relative border-[3px]  border-text-muted w-14 h-14 rounded-full bg-muted -ml-3;
+  &::before {
+    content: attr(data-tooltip);
+    @apply absolute top-full opacity-0 px-[10px] py-[5px] text-text text-sm rounded-lg mt-2.5 bg-muted whitespace-nowrap
+    transition-opacity duration-150 ease-in;
+  }
+  &:hover::before {
+    @apply opacity-100;
+  }
+  .avatar-picture {
+    @apply object-cover rounded-full w-full h-full;
+  }
+}
+@utility avatar-more {
+  @apply border-4 rounded-full border-text-muted bg-muted min-w-14 h-14 w-14 -ml-3 flex justify-center items-center text-text;
+}
+
+/* Keyframes */
+/* className="data-[state=open]:animate-in data-[state=closed]:animate-out
+        " */
+
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes animate-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+}
+@utility animate-in {
+  animation: animate-in 0.3s ease-out forwards;
+}
+@utility animate-out {
+  animation: animate-out 0.3s ease-in forwards;
 }

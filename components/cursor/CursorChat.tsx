@@ -1,5 +1,5 @@
 import CursorSVG from "@/public/assets/CursorSVG";
-import { CursorMode, CursorState } from "@/types/type";
+import { CursorMode, CursorState } from "@/types/types";
 import React, { useCallback } from "react";
 type Props = {
   state: {
