@@ -206,7 +206,7 @@ export default function Home() {
     <main className="h-screen  overflow-hidden">
       <NavBar activeElement={activeElement} handleActiveElement={handleActiveElement} />
       <section className="flex h-full flex-row">
-        <LeftSideBar />
+        <LeftSideBar shapes={Array.from(canvasObjects)} />
         <Live canvasRef={canvasRef} />
         <RightSideBar />
       </section>
