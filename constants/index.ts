@@ -1,24 +1,31 @@
+import { navElement, shapeElement } from "@/types/type";
+
 export const COLORS = ["#EFCA08", "#00A6A6", "#FF8552", "#8AAEE5", "#F61067"];
-export const shapeElements = [
+
+export const shapeElements: shapeElement[] = [
   {
     icon: "/assets/rectangle.svg",
     name: "Rectangle",
     value: "rectangle",
+    shortcut: "R",
   },
   {
     icon: "/assets/circle.svg",
     name: "Circle",
     value: "circle",
+    shortcut: "O",
   },
   {
     icon: "/assets/triangle.svg",
     name: "Triangle",
     value: "triangle",
+    shortcut: "P", //for polygon
   },
   {
     icon: "/assets/line.svg",
     name: "Line",
     value: "line",
+    shortcut: "L",
   },
   // {
   //   icon: "/assets/image.svg",
@@ -29,14 +36,16 @@ export const shapeElements = [
     icon: "/assets/freeform.svg",
     name: "Free Drawing",
     value: "freeform",
+    shortcut: "F",
   },
 ];
 
-export const navElements = [
+export const navElements: navElement[] = [
   {
     icon: "/assets/select.svg",
     name: "Select",
     value: "select",
+    shortcut: "V",
   },
   {
     icon: "/assets/rectangle.svg",
@@ -47,11 +56,13 @@ export const navElements = [
     icon: "/assets/text.svg",
     value: "text",
     name: "Text",
+    shortcut: "T",
   },
   {
     icon: "/assets/delete.svg",
     value: "delete",
     name: "Delete",
+    shortcut: "D",
   },
   {
     icon: "/assets/reset.svg",
@@ -62,8 +73,10 @@ export const navElements = [
     icon: "/assets/comments.svg",
     value: "comments",
     name: "Comments",
+    shortcut: "C",
   },
 ];
+
 export const defaultNavElement = {
   icon: "/assets/select.svg",
   name: "Select",

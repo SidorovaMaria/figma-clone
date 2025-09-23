@@ -2,7 +2,7 @@ import { CustomFabricObject } from "@/types/type";
 import { Circle, IText, Line, Polygon, Rect, Triangle } from "fabric";
 import { ITextOptions } from "fabric/fabric-impl";
 import { v4 as uuid } from "uuid";
-export const DEFAULT_FULL_COLOR = "#D9D9D9";
+export const DEFAULT_FULL_COLOR = "#8c8c8c";
 
 export const createRectangle = (pointer: PointerEvent) => {
   /**
@@ -79,7 +79,7 @@ export const createText = (pointer: PointerEvent, text: string) => {
   const iText = new IText(text, {
     left: pointer.x,
     top: pointer.y,
-    fontSize: 24,
+    fontSize: 16,
     fontFamily: "Rubik",
     fontWeight: "400",
     fill: DEFAULT_FULL_COLOR || "#D9D9D9",

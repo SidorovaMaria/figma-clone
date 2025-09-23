@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 import { navElements } from "@/constants";
-import { ActiveElement } from "@/types/type";
-import { CaretDownIcon, CheckIcon, ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
+import { ActiveElement, shapeElement } from "@/types/type";
+import { ChevronDownIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import { NavigationMenu, Select } from "radix-ui";
 
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 type ToolsBarProps = {
   activeElement: ActiveElement;
   handleActiveElement: (element: ActiveElement) => void;
@@ -13,25 +14,93 @@ type ToolsBarProps = {
 
 // Creating using RADIX UI
 const ToolsBar = ({ handleActiveElement, activeElement }: ToolsBarProps) => {
-  const isActive = (value: string | Array<ActiveElement>) =>
-    (activeElement && activeElement.value === value) ||
-    (Array.isArray(value) && value.some((val) => val?.value === activeElement?.value));
+  //KEYBOARD SHORTCUTS
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (!t) return;
+      const tag = t.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || t.isContentEditable) return;
+
+      if (e.key === "r") {
+        handleActiveElement({
+          name: "Rectangle",
+          value: "rectangle",
+          icon: "/assets/rectangle.svg",
+        });
+      }
+      if (e.key === "o") {
+        handleActiveElement({
+          name: "Circle",
+          value: "circle",
+          icon: "/assets/circle.svg",
+        });
+      }
+      if (e.key === "p") {
+        handleActiveElement({
+          name: "Triangle",
+          value: "triangle",
+          icon: "/assets/triangle.svg",
+        });
+      }
+      if (e.key === "l") {
+        handleActiveElement({
+          name: "Line",
+          value: "line",
+          icon: "/assets/line.svg",
+        });
+      }
+      if (e.key === "f") {
+        handleActiveElement({
+          name: "Free Drawing",
+          value: "freeform",
+          icon: "/assets/freeform.svg",
+        });
+      }
+      if (e.key === "v") {
+        handleActiveElement({
+          name: "Select",
+          value: "select",
+          icon: "/assets/select.svg",
+        });
+      }
+      if (e.key === "t") {
+        handleActiveElement({
+          name: "Text",
+          value: "text",
+          icon: "/assets/text.svg",
+        });
+      }
+      if (e.key === "Backspace" || e.key === "Delete") {
+        handleActiveElement({
+          name: "Delete",
+          value: "delete",
+          icon: "/assets/delete.svg",
+        });
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [handleActiveElement]);
+  const isActive = useMemo(
+    () => (value: string | Array<ActiveElement>) =>
+      (activeElement && activeElement.value === value) ||
+      (Array.isArray(value) && value.some((v) => v?.value === activeElement?.value)),
+    [activeElement]
+  );
   return (
-    <NavigationMenu.Root className="">
+    <NavigationMenu.Root>
       <NavigationMenu.List className="center flex list-none rounded-md  m-2.5 p-0.5 gap-1.5">
         {navElements.map((item: ActiveElement | any) => (
           <NavigationMenu.Item
-            key={item.value}
+            key={item?.name}
             onClick={() => {
-              if (Array.isArray(item.value)) return;
-              handleActiveElement(item);
-              console.log("Clicked on: ", item);
+              if (Array.isArray(item?.value)) return; // shapes handled by <ShapesMenu/>
+              handleActiveElement(item as ActiveElement);
             }}
             className={`group px-2.5 py-2.5 rounded-md flex justify-center items-center cursor-pointer min-w-10 h-10
-                ${isActive(item.value) ? "bg-secondary" : "hover:bg-secondary/50"}`}
+                ${isActive(item?.value) ? "bg-secondary" : "hover:bg-secondary/50"}`}
           >
-            {/* {item.name} */}
-            {/* If its a shape Item show the trigger and content */}
             {Array.isArray(item.value) ? (
               <ShapesMenu
                 item={item}
@@ -75,35 +144,31 @@ export const ShapesMenu = ({
   activeElement: ActiveElement;
   handleActiveElement: (element: ActiveElement) => void;
 }) => {
-  const isDropdownElem = item.value.some(
-    (elem: ActiveElement) => elem?.value === activeElement?.value
-  );
+  const options = item.value; // array of shape options (leaf items)
+  const selectedValue = options.some((o: shapeElement) => o?.value === activeElement?.value)
+    ? (activeElement.value as string)
+    : (options[0]?.value as string);
   return (
     <Select.Root
-      value={isDropdownElem ? activeElement?.value : undefined}
+      value={selectedValue}
       onValueChange={(value) => {
-        const selected = item.value.find((elem: ActiveElement) => elem?.value === value);
-        if (selected) {
-          handleActiveElement(selected);
-        }
+        const selected = options.find((o: shapeElement) => o.value === value);
+        if (selected) handleActiveElement(selected);
       }}
     >
       <Select.Trigger asChild className="no-ring group">
-        <button
-          className="flex flex-row gap-0.5 justify-center items-center cursor-pointer"
-          onClick={() => handleActiveElement(item)}
-        >
-          <div className="relative w-6 h-6 flex items-center justify-center ">
+        <button className="flex flex-row gap-0.5 justify-center items-center cursor-pointer">
+          <span className="relative w-6 h-6 flex items-center justify-center ">
             <Image
-              src={isDropdownElem ? activeElement?.icon : item.icon}
+              src={options.find((o: shapeElement) => o.value === selectedValue)?.icon ?? item.icon}
               alt={item.name}
               fill
               className={`${
-                isDropdownElem ? "contrast-200" : "greyscale brightness-75"
+                selectedValue ? "contrast-200" : "greyscale brightness-75"
               } group-hover:brightness-100
           group-hover:greyscale-0`}
             />
-          </div>
+          </span>
           <Select.Icon
             className="greyscale brightness-75 transition-transform duration-300 ease-in-out group-data-[state=open]:rotate-180
           group-data-[state=closed]:rotate-0 group-hover:brightness-100
@@ -117,17 +182,17 @@ export const ShapesMenu = ({
         <Select.Content
           side="bottom"
           position="popper"
-          className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[side=bottom]:translate-y-2 -translate-x-8
-          backdrop-blur-lg bg-primary/30 border border-primary/30 rounded-md shadow-md overflow-hidden relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto 
+          className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[side=bottom]:translate-y-4 -translate-x-8
+          backdrop-blur-xl bg-muted/70 border border-primary/30 rounded-md shadow-md overflow-hidden relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto 
        "
         >
           <Select.Viewport className=" h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1">
-            {item.value.map((elem: ActiveElement) => (
+            {options.map((elem: ActiveElement) => (
               <Select.Item
-                value={elem?.value as string}
-                key={elem?.name}
-                className={`flex h-fit justify-between gap-10  px-5 py-3 focus:border-none no-ring cursor-pointer hover:bg-secondary rounded-md disabled:pointer-events-none disabled:opacity-50 data-[highlighted]:bg-secondary data-[highlighted]:text-text`}
-                disabled={elem?.value === activeElement?.value}
+                value={elem.value as string}
+                key={elem.name}
+                className={`flex h-fit justify-between gap-10  px-4 py-2.5 focus:border-none no-ring cursor-pointer hover:bg-secondary rounded-md disabled:pointer-events-none disabled:opacity-50 data-[highlighted]:bg-secondary data-[highlighted]:text-text`}
+                disabled={elem.value === selectedValue}
               >
                 <div className="group flex items-center gap-2">
                   <Image
@@ -138,6 +203,9 @@ export const ShapesMenu = ({
                   />
                   <p className={`text-sm `}>{elem?.name}</p>
                 </div>
+                {elem.shortcut && (
+                  <p className="ml-auto text-xs text-text-muted">{elem.shortcut}</p>
+                )}
               </Select.Item>
             ))}
           </Select.Viewport>

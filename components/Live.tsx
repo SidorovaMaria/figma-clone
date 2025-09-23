@@ -61,6 +61,11 @@ const Live = ({ canvasRef }: Props) => {
   //Bind Events
   useEffect(() => {
     function onKeyUp(e: KeyboardEvent) {
+      //Ignore if we are typing in an input or textarea
+      const t = e.target as HTMLElement | null;
+      if (!t) return;
+      const tag = t.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || t.isContentEditable) return;
       if (e.key === "/") {
         setState({
           mode: CursorMode.Chat,

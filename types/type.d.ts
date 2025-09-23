@@ -33,12 +33,19 @@ export type Attributes = {
   fill: string;
   stroke: string;
 };
-
-export type ActiveElement = {
+export type shapeElement = {
+  icon: string;
   name: string;
   value: string;
+  shortcut?: string;
+};
+export type navElement = {
   icon: string;
-} | null;
+  name: string;
+  value: string | shapeElement[];
+  shortcut?: string;
+};
+export type ActiveElement = Partial<navElement>;
 
 export interface CustomFabricObject<T extends FabricObject> extends FabricObject {
   objectId?: string;
