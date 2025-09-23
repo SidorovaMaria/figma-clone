@@ -67,8 +67,29 @@ export type CanvasMouseUp = {
   syncShapeInStorage: (shape: FabricObject) => void;
   setActiveElement: React.Dispatch<React.SetStateAction<ActiveElement>>;
 };
-// options: fabric.IEvent;
-//   canvas: fabric.Canvas;
-//   selectedShapeRef: any;
-//   isDrawing: React.MutableRefObject<boolean>;
-//   shapeRef: React.MutableRefObject<fabric.Object | null>;
+export type CanvasMouseMove = {
+  options: IEvent;
+  canvas: Canvas;
+  isDrawing: React.MutableRefObject<boolean>;
+  selectedShapeRef: any;
+  shapeRef: any;
+  syncShapeInStorage: (shape: FabricObject) => void;
+};
+export type CanvasMouseUp = {
+  canvas: Canvas;
+  isDrawing: React.MutableRefObject<boolean>;
+  shapeRef: any;
+  activeObjectRef: React.MutableRefObject<FabricObject | null>;
+  selectedShapeRef: any;
+  syncShapeInStorage: (shape: FabricObject) => void;
+  setActiveElement: any;
+};
+export type CanvasObjectModified = {
+  options: IEvent;
+  syncShapeInStorage: (shape: FabricObject) => void;
+};
+export type RenderCanvasArgs = {
+  fabricRef: React.MutableRefObject<Canvas | null>;
+  canvasObjects: any;
+  activeObjectRef: any;
+};

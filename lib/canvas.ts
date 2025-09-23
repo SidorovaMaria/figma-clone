@@ -1,7 +1,16 @@
-import { CanvasMouseDown } from "@/types/type";
-import { Canvas, PatternBrush, PencilBrush, Rect } from "fabric";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  CanvasMouseDown,
+  CanvasMouseMove,
+  CanvasMouseUp,
+  CanvasObjectModified,
+  RenderCanvasArgs,
+} from "@/types/type";
+import { Canvas, FabricObject, PencilBrush, util } from "fabric";
+
 import { createFabricShape } from "./shapes";
 import { IEvent } from "fabric/fabric-impl";
+import { defaultNavElement } from "@/constants";
 export const initializeFabric = ({
   fabricRef,
   canvasRef,
@@ -22,6 +31,46 @@ export const initializeFabric = ({
   fabricRef.current = canvas;
   return canvas;
 };
+
+export const renderCanvas = async ({
+  fabricRef,
+  canvasObjects,
+  activeObjectRef,
+}: RenderCanvasArgs) => {
+  const canvas = fabricRef.current;
+  if (!canvas) return;
+
+  // Clear once
+  canvas.clear();
+
+  // Optional: avoid re-rendering on every add
+  const prevRenderOnAddRemove = canvas.renderOnAddRemove;
+  canvas.renderOnAddRemove = false;
+
+  let objectToActivate: FabricObject | null = null;
+
+  // v6: enlivenObjects returns a Promise< FabricObject[] >
+  for (const [objectId, objectData] of Array.from(canvasObjects as Iterable<[string, any]>)) {
+    const [obj] = await util.enlivenObjects<FabricObject>([objectData]); // reviver/namespace not needed in v6
+    if (!obj) continue;
+
+    canvas.add(obj as any);
+
+    if (activeObjectRef.current?.objectId === objectId) {
+      objectToActivate = obj; // set active after the batch to avoid extra layout thrash
+    }
+  }
+
+  if (objectToActivate) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    canvas.setActiveObject(objectToActivate as any);
+  }
+
+  // Restore and paint once
+  canvas.renderOnAddRemove = prevRenderOnAddRemove;
+  canvas.requestRenderAll(); // prefer requestRenderAll over renderAll in modern Fabric
+};
+
 export const handleCanvasMouseDown = ({
   options,
   canvas,
@@ -122,4 +171,105 @@ export const handleCanvasZoom = ({
   );
   options.e.preventDefault();
   options.e.stopPropagation();
+};
+export const handleCanvaseMouseMove = ({
+  options,
+  canvas,
+  isDrawing,
+  selectedShapeRef,
+  shapeRef,
+  syncShapeInStorage,
+}: CanvasMouseMove) => {
+  // if selected shape is freeform, return
+  if (!isDrawing.current) return;
+  if (selectedShapeRef.current === "freeform") return;
+
+  canvas.isDrawingMode = false;
+
+  // get pointer coordinates
+  const pointer = canvas.getPointer(options.e);
+  // depending on the selected shape, set the dimensions of the shape stored in shapeRef in previous step of handelCanvasMouseDown
+  // calculate shape dimensions based on pointer coordinates
+  switch (selectedShapeRef?.current) {
+    case "rectangle":
+      shapeRef.current?.set({
+        width: pointer.x - (shapeRef.current?.left || 0),
+        height: pointer.y - (shapeRef.current?.top || 0),
+      });
+      break;
+
+    case "circle":
+      shapeRef.current.set({
+        radius: Math.abs(pointer.x - (shapeRef.current?.left || 0)) / 2,
+      });
+      break;
+
+    case "triangle":
+      shapeRef.current?.set({
+        width: pointer.x - (shapeRef.current?.left || 0),
+        height: pointer.y - (shapeRef.current?.top || 0),
+      });
+      break;
+
+    case "line":
+      shapeRef.current?.set({
+        x2: pointer.x,
+        y2: pointer.y,
+      });
+      break;
+
+    case "image":
+      shapeRef.current?.set({
+        width: pointer.x - (shapeRef.current?.left || 0),
+        height: pointer.y - (shapeRef.current?.top || 0),
+      });
+
+    default:
+      break;
+  }
+  // render objects on canvas
+  // renderAll: http://fabricjs.com/docs/fabric.Canvas.html#renderAll
+  canvas.renderAll();
+
+  // sync shape in storage
+  if (shapeRef.current?.objectId) {
+    syncShapeInStorage(shapeRef.current);
+  }
+};
+export const handleCanvasMouseUp = ({
+  canvas,
+  isDrawing,
+  shapeRef,
+  activeObjectRef,
+  selectedShapeRef,
+  syncShapeInStorage,
+  setActiveElement,
+}: CanvasMouseUp) => {
+  isDrawing.current = false;
+  if (selectedShapeRef.current === "freeform") return;
+
+  // sync shape in storage as drawing is stopped
+  syncShapeInStorage(shapeRef.current);
+
+  // set everything to null
+  shapeRef.current = null;
+  activeObjectRef.current = null;
+  selectedShapeRef.current = null;
+  // if canvas is not in drawing mode, set active element to default nav element after 700ms
+  if (!canvas.isDrawingMode) {
+    setTimeout(() => {
+      setActiveElement(defaultNavElement);
+    }, 700);
+  }
+};
+export const handleCanvasObjectModified = ({
+  options,
+  syncShapeInStorage,
+}: CanvasObjectModified) => {
+  const target = options.target;
+  if (!target) return;
+  if (target?.type == "activeSelection") {
+  } else {
+    syncShapeInStorage(target as FabricObject);
+  }
 };

@@ -7,7 +7,16 @@ import { ActiveElement, Attributes } from "@/types/type";
 import { useEffect, useRef, useState } from "react";
 import { Canvas, FabricObject } from "fabric";
 
-import { handleCanvasMouseDown, handleCanvasResize, initializeFabric } from "@/lib/canvas";
+import {
+  handleCanvaseMouseMove,
+  handleCanvasMouseDown,
+  handleCanvasMouseUp,
+  handleCanvasObjectModified,
+  handleCanvasResize,
+  handleCanvasZoom,
+  initializeFabric,
+  renderCanvas,
+} from "@/lib/canvas";
 import { DEFAULT_FULL_COLOR } from "@/lib/shapes";
 import { useMutation, useStorage } from "@liveblocks/react/suspense";
 
@@ -23,6 +32,18 @@ export default function Home() {
    * from theliveblocks.config.ts
    */
   const canvasObjects = useStorage((root) => root.canvasObjects);
+
+  const syncShapeInStorage = useMutation(({ storage }, object) => {
+    //Check if we have a valid object
+    if (!object) return;
+    // Get the objectId from the object - descructuring
+    const { objectId } = object;
+    //Turn the fabric object into a JSON format to be able to store it in the storage
+    const dataShape = object.toJSON();
+    dataShape.objectId = objectId;
+    const canvasObjects = storage.get("canvasObjects");
+    canvasObjects.set(objectId, dataShape);
+  }, []);
 
   /** canvasRef is a reference to the canvas element that we'll use to
    * initialize the fabric canvas.
@@ -118,6 +139,35 @@ export default function Home() {
     canvas.on("mouse:down", (options) =>
       handleCanvasMouseDown({ options, canvas, selectedShapeRef, isDrawing, shapeRef })
     );
+    canvas.on("mouse:up", () =>
+      handleCanvasMouseUp({
+        canvas,
+        isDrawing,
+        shapeRef,
+        activeObjectRef,
+        selectedShapeRef,
+        syncShapeInStorage,
+        setActiveElement,
+      })
+    );
+
+    canvas.on("mouse:move", (options) => {
+      handleCanvaseMouseMove({
+        options,
+        canvas,
+        isDrawing,
+        selectedShapeRef,
+        shapeRef,
+        syncShapeInStorage,
+      });
+    });
+    canvas.on("object:modified", (options) => {
+      handleCanvasObjectModified({
+        options,
+        syncShapeInStorage,
+      });
+    });
+
     /**
      * listen to the resize event on the window which is fired when the
      * user resizes the window.
@@ -125,6 +175,7 @@ export default function Home() {
      * We're using this to resize the canvas when the user resizes the
      * window.
      */
+
     window.addEventListener("resize", () => {
       handleCanvasResize({
         canvas: fabricRef.current,
@@ -142,6 +193,14 @@ export default function Home() {
       canvas.dispose();
     };
   }, [canvasRef]);
+  // render the canvas when the canvasObjects from live storage changes
+  useEffect(() => {
+    renderCanvas({
+      fabricRef,
+      canvasObjects,
+      activeObjectRef,
+    });
+  }, [canvasObjects]);
 
   return (
     <main className="h-screen  overflow-hidden">

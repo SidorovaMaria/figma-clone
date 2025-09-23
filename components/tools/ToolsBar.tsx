@@ -16,7 +16,6 @@ const ToolsBar = ({ handleActiveElement, activeElement }: ToolsBarProps) => {
   const isActive = (value: string | Array<ActiveElement>) =>
     (activeElement && activeElement.value === value) ||
     (Array.isArray(value) && value.some((val) => val?.value === activeElement?.value));
-  console.log("Active Element in ToolsBar: ", activeElement);
   return (
     <NavigationMenu.Root className="">
       <NavigationMenu.List className="center flex list-none rounded-md  m-2.5 p-0.5 gap-1.5">

@@ -1,3 +1,5 @@
+import { Abortable, BaseFabricObject, FabricObject, Shadow, TFiller } from "fabric";
+
 export enum CursorMode {
   Hidden,
   Chat,
