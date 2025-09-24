@@ -77,17 +77,44 @@ export const handleDelete = (canvas: Canvas, deleteShapeFromStorage: (id: string
 };
 export const toolBarShortcuts = (handleActiveElement: (element: ActiveElement) => void) => {
   const base = toolBarShortCuts;
+  const isMod = (e: KeyboardEvent) => (/mac/i.test(navigator.userAgent) ? e.metaKey : e.ctrlKey);
   const map: ShortcutMap = {
-    r: () => handleActiveElement(base.r),
-    o: () => handleActiveElement(base.o),
-    p: () => handleActiveElement(base.p),
-    l: () => handleActiveElement(base.l),
-    f: () => handleActiveElement(base.f),
-    v: () => handleActiveElement(base.v),
-    t: () => handleActiveElement(base.t),
-    c: () => handleActiveElement(base.c),
-    Backspace: () => handleActiveElement(base.Backspace),
-    Delete: () => handleActiveElement(base.Delete),
+    r: (e) => {
+      if (!isMod(e)) handleActiveElement(base.r);
+    },
+    o: (e) => {
+      if (!isMod(e)) handleActiveElement(base.o);
+    },
+    p: (e) => {
+      if (!isMod(e)) handleActiveElement(base.p);
+    },
+    l: (e) => {
+      if (!isMod(e)) handleActiveElement(base.l);
+    },
+    f: (e) => {
+      if (!isMod(e)) handleActiveElement(base.f);
+    },
+    v: (e) => {
+      if (!isMod(e)) handleActiveElement(base.v);
+    },
+    t: (e) => {
+      if (!isMod(e)) handleActiveElement(base.t);
+    },
+    c: (e) => {
+      if (!isMod(e)) handleActiveElement(base.c);
+    },
+    Backspace: (e) => {
+      if (!isMod(e)) handleActiveElement(base.Backspace);
+    },
+    Delete: (e) => {
+      if (!isMod(e)) handleActiveElement(base.Delete);
+    },
+    // Do not override Ctrl+R / Cmd+R to preserve browser refresh
+    // Do not override Ctrl+V / Cmd+V to preserve paste
+    // Do not override Ctrl+C / Cmd+C to preserve copy
+    // Do not override Ctrl+X / Cmd+X to preserve cut
+    // Do not override Ctrl+Z / Cmd+Z to preserve undo
+    // Do not override Ctrl+Y / Cmd+Y to preserve redo
   };
   return map;
 };

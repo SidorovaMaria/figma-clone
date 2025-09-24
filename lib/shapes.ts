@@ -1,6 +1,7 @@
-import { CustomFabricObject } from "@/types/type";
-import { Circle, IText, Line, Polygon, Rect, Triangle } from "fabric";
+import { CustomFabricObject, ImageUpload } from "@/types/type";
+import { Circle, FabricImage, IText, Line, Polygon, Rect, Triangle, util } from "fabric";
 import { ITextOptions } from "fabric/fabric-impl";
+import { read } from "fs";
 import { v4 as uuid } from "uuid";
 export const DEFAULT_FULL_COLOR = "#8c8c8c";
 
@@ -103,4 +104,23 @@ export const createFabricShape = (shapeType: string, pointer: PointerEvent) => {
     default:
       return null;
   }
+};
+export const handleImageUpload = ({ file, canvas, shapeRef, syncShapeInStorage }: ImageUpload) => {
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const image = await FabricImage.fromURL(reader.result as string);
+    image.set({
+      left: 100,
+      top: 100,
+      scaleX: 0.5,
+      scaleY: 0.5,
+      objectId: uuid(),
+    });
+    canvas.current?.add(image);
+    shapeRef.current = image;
+    syncShapeInStorage(image);
+    canvas.current?.setActiveObject(image);
+    canvas.current?.requestRenderAll();
+  };
+  reader.readAsDataURL(file);
 };

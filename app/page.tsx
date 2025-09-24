@@ -18,7 +18,7 @@ import {
   initializeFabric,
   renderCanvas,
 } from "@/lib/canvas";
-import { DEFAULT_FULL_COLOR } from "@/lib/shapes";
+import { DEFAULT_FULL_COLOR, handleImageUpload } from "@/lib/shapes";
 import { useMutation, useRedo, useStorage, useUndo } from "@liveblocks/react/suspense";
 import { defaultNavElement } from "@/constants";
 import { buildEditorBindings, handleDelete } from "@/lib/key-events";
@@ -101,6 +101,15 @@ export default function Home() {
    */
   const activeObjectRef = useRef<FabricObject | null>(null);
   const isEditingRef = useRef(false);
+  /**
+   * imageInputRef is a reference to the input element that we use to upload
+   * an image to the canvas.
+   *
+   * We want image upload to happen when clicked on the image item from the
+   * dropdown menu. So we're using this ref to trigger the click event on the
+   * input element when the user clicks on the image item from the dropdown.
+   */
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   /**
    * activeElement is an object that wll contain the name, value and icon of the active element in the toolbar
@@ -251,7 +260,20 @@ export default function Home() {
 
   return (
     <main className="h-screen  overflow-hidden">
-      <NavBar activeElement={activeElement} handleActiveElement={handleActiveElement} />
+      <NavBar
+        activeElement={activeElement}
+        handleActiveElement={handleActiveElement}
+        imageInputRef={imageInputRef}
+        handleImageUpload={(e: any) => {
+          e.stopPropagation();
+          handleImageUpload({
+            file: e.target.files[0],
+            canvas: fabricRef as any,
+            shapeRef,
+            syncShapeInStorage,
+          });
+        }}
+      />
       <section className="flex h-full flex-row">
         <LeftSideBar shapes={Array.from(canvasObjects)} />
         <Live canvasRef={canvasRef} />

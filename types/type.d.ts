@@ -82,6 +82,13 @@ export type CanvasMouseMove = {
   shapeRef: any;
   syncShapeInStorage: (shape: FabricObject) => void;
 };
+export type ImageUpload = {
+  file: File;
+  canvas: React.MutableRefObject<Canvas>;
+  shapeRef: React.MutableRefObject<FabricObject | null>;
+  syncShapeInStorage: (shape: FabricObject) => void;
+};
+
 export type CanvasMouseUp = {
   canvas: Canvas;
   isDrawing: React.MutableRefObject<boolean>;

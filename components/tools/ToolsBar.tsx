@@ -12,10 +12,17 @@ import React, { useEffect, useMemo } from "react";
 type ToolsBarProps = {
   activeElement: ActiveElement;
   handleActiveElement: (element: ActiveElement) => void;
+  imageInputRef: React.MutableRefObject<HTMLInputElement | null>;
+  handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 // Creating using RADIX UI
-const ToolsBar = ({ handleActiveElement, activeElement }: ToolsBarProps) => {
+const ToolsBar = ({
+  handleActiveElement,
+  activeElement,
+  imageInputRef,
+  handleImageUpload,
+}: ToolsBarProps) => {
   //KEYBOARD SHORTCUTS
   useShortcut({
     bindings: toolBarShortcuts(handleActiveElement),
@@ -45,6 +52,8 @@ const ToolsBar = ({ handleActiveElement, activeElement }: ToolsBarProps) => {
                 item={item}
                 activeElement={activeElement}
                 handleActiveElement={handleActiveElement}
+                imageInputRef={imageInputRef}
+                handleImageUpload={handleImageUpload}
               />
             ) : item?.value === "comments" ? (
               <button className="relative w-5 h-5 object-contain cursor-pointer">
@@ -78,84 +87,101 @@ export const ShapesMenu = ({
   item,
   activeElement,
   handleActiveElement,
+  imageInputRef,
+  handleImageUpload,
 }: {
   item: ActiveElement | any;
   activeElement: ActiveElement;
   handleActiveElement: (element: ActiveElement) => void;
+  imageInputRef: React.MutableRefObject<HTMLInputElement | null>;
+  handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const options = item.value; // array of shape options (leaf items)
   const selectedValue = options.some((o: shapeElement) => o?.value === activeElement?.value)
     ? (activeElement.value as string)
     : (options[0]?.value as string);
   return (
-    <Select.Root
-      value={selectedValue}
-      onOpenChange={(isOpen) => {
-        if (!isOpen) return;
-        // when opening the dropdown, set the active element to the first option if the current active element is not in the options
-        if (!options.some((o: shapeElement) => o?.value === activeElement?.value)) {
-          handleActiveElement(options[0] as ActiveElement);
-        }
-      }}
-      onValueChange={(value) => {
-        const selected = options.find((o: shapeElement) => o.value === value);
-        if (selected) handleActiveElement(selected);
-      }}
-    >
-      <Select.Trigger asChild className="no-ring group">
-        <button className="flex flex-row gap-0.5 justify-center items-center cursor-pointer">
-          <span className="relative w-6 h-6 flex items-center justify-center ">
-            <Image
-              src={options.find((o: shapeElement) => o.value === selectedValue)?.icon ?? item.icon}
-              alt={item.name}
-              fill
-              className={`${
-                selectedValue ? "contrast-200" : "greyscale brightness-75"
-              } group-hover:brightness-100
+    <>
+      <Select.Root
+        value={selectedValue}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) return;
+          // when opening the dropdown, set the active element to the first option if the current active element is not in the options
+          if (!options.some((o: shapeElement) => o?.value === activeElement?.value)) {
+            handleActiveElement(options[0] as ActiveElement);
+          }
+        }}
+        onValueChange={(value) => {
+          const selected = options.find((o: shapeElement) => o.value === value);
+          if (selected) handleActiveElement(selected);
+        }}
+      >
+        <Select.Trigger asChild className="no-ring group">
+          <button className="flex flex-row gap-0.5 justify-center items-center cursor-pointer">
+            <span className="relative w-6 h-6 flex items-center justify-center ">
+              <Image
+                src={
+                  options.find((o: shapeElement) => o.value === selectedValue)?.icon ?? item.icon
+                }
+                alt={item.name}
+                fill
+                className={`${
+                  selectedValue ? "contrast-200" : "greyscale brightness-75"
+                } group-hover:brightness-100
           group-hover:greyscale-0`}
-            />
-          </span>
-          <Select.Icon
-            className="greyscale brightness-75 transition-transform duration-300 ease-in-out group-data-[state=open]:rotate-180
+              />
+            </span>
+            <Select.Icon
+              className="greyscale brightness-75 transition-transform duration-300 ease-in-out group-data-[state=open]:rotate-180
           group-data-[state=closed]:rotate-0 group-hover:brightness-100
           group-hover:greyscale-0"
-          >
-            <ChevronDownIcon />
-          </Select.Icon>
-        </button>
-      </Select.Trigger>
-      <Select.Portal>
-        <Select.Content
-          side="bottom"
-          position="popper"
-          className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[side=bottom]:translate-y-4 -translate-x-8
+            >
+              <ChevronDownIcon />
+            </Select.Icon>
+          </button>
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Content
+            side="bottom"
+            position="popper"
+            className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[side=bottom]:translate-y-4 -translate-x-8
           backdrop-blur-xl bg-muted/70 border border-primary/30 rounded-md shadow-md overflow-hidden relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto
        "
-        >
-          <Select.Viewport className=" h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1">
-            {options.map((elem: ActiveElement) => (
-              <Select.Item
-                value={elem.value as string}
-                key={elem.name}
-                className={`flex h-fit justify-between gap-10  px-4 py-2.5 focus:border-none no-ring cursor-pointer hover:bg-secondary rounded-md `}
-              >
-                <div className="group flex items-center gap-2">
-                  <Image
-                    src={elem?.icon as string}
-                    alt={elem?.name as string}
-                    width={20}
-                    height={20}
-                  />
-                  <p className={`text-sm `}>{elem?.name}</p>
-                </div>
-                {elem.shortcut && (
-                  <p className="ml-auto text-xs text-text-muted">{elem.shortcut}</p>
-                )}
-              </Select.Item>
-            ))}
-          </Select.Viewport>
-        </Select.Content>
-      </Select.Portal>
-    </Select.Root>
+          >
+            <Select.Viewport className=" h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1">
+              {options.map((elem: ActiveElement) => (
+                <Select.Item
+                  value={elem.value as string}
+                  key={elem.name}
+                  className={`flex h-fit justify-between gap-10  px-4 py-2.5 focus:border-none no-ring cursor-pointer hover:bg-secondary rounded-md `}
+                >
+                  <div className="group flex items-center gap-2">
+                    <Image
+                      src={elem?.icon as string}
+                      alt={elem?.name as string}
+                      width={20}
+                      height={20}
+                    />
+                    <p className={`text-sm `}>{elem?.name}</p>
+                  </div>
+                  {elem.shortcut && (
+                    <p className="ml-auto text-xs text-text-muted">{elem.shortcut}</p>
+                  )}
+                </Select.Item>
+              ))}
+            </Select.Viewport>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
+      {selectedValue === "image" && (
+        <input
+          type="file"
+          accept="image/*"
+          className="max-w-[65px] text-xs"
+          ref={imageInputRef}
+          onChange={handleImageUpload}
+        />
+      )}
+    </>
   );
 };
