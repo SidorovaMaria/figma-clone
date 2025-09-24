@@ -4,6 +4,7 @@ import {
   CanvasMouseMove,
   CanvasMouseUp,
   CanvasObjectModified,
+  CanvasObjectScaling,
   CanvasSelectionCreated,
   CanvasSelectionUpdated,
   RenderCanvasArgs,
@@ -11,7 +12,7 @@ import {
 import { Canvas, FabricObject, PencilBrush, Point, util } from "fabric";
 
 import { createFabricShape } from "./shapes";
-import { IEvent } from "fabric/fabric-impl";
+
 import { defaultNavElement } from "@/constants";
 export const initializeFabric = ({
   fabricRef,
@@ -148,13 +149,7 @@ export const handleCanvasResize = ({ canvas }: { canvas: Canvas | null }) => {
     height: canvasElement.clientHeight,
   });
 };
-export const handleCanvasZoom = ({
-  options,
-  canvas,
-}: {
-  options: IEvent & { e: WheelEvent };
-  canvas: fabric.Canvas;
-}) => {
+export const handleCanvasZoom = ({ options, canvas }: { options: any; canvas: fabric.Canvas }) => {
   const delta = options.e?.deltaY;
   //https://fabricjs.com/api/classes/canvas/#getzoom
   let zoom = canvas.getZoom();
@@ -332,4 +327,46 @@ export const handleCanvasSelectionUpdated = ({
     isEditingRef,
     setElementAttributes,
   });
+};
+export const handleCanvasObjectScaling = ({
+  options,
+  setElementAttributes,
+}: CanvasObjectScaling) => {
+  const selectedElement = options.target;
+  if (!selectedElement) return;
+  if (selectedElement.width === undefined || selectedElement.height === undefined) {
+    console.log("No width or height");
+    return;
+  }
+
+  // calculate scaled dimensions of the object
+  const scaledWidth = selectedElement?.scaleX
+    ? selectedElement?.width * selectedElement?.scaleX
+    : selectedElement?.width;
+
+  const scaledHeight = selectedElement?.scaleY
+    ? selectedElement?.height * selectedElement?.scaleY
+    : selectedElement?.height;
+
+  setElementAttributes((prev) => ({
+    ...prev,
+    width: scaledWidth?.toFixed(0).toString() || "",
+    height: scaledHeight?.toFixed(0).toString() || "",
+  }));
+};
+export const handleCanvasObjectMoving = ({
+  options,
+  setElementAttributes,
+}: CanvasObjectScaling) => {
+  const selectedElement = options.target;
+  if (!selectedElement) return;
+  if (selectedElement.top === undefined || selectedElement.left === undefined) {
+    console.log("No top or left");
+    return;
+  }
+  setElementAttributes((prev) => ({
+    ...prev,
+    x: selectedElement.left.toFixed(0).toString() || "",
+    y: selectedElement.top.toFixed(0).toString() || "",
+  }));
 };

@@ -116,6 +116,11 @@ export type CanvasSelectionCreated = {
   isEditingRef: React.MutableRefObject<boolean>;
   setElementAttributes: React.Dispatch<React.SetStateAction<Attributes>>;
 };
+export type CanvasObjectScaling = {
+  options: IEvent;
+  setElementAttributes: React.Dispatch<React.SetStateAction<Attributes>>;
+};
+
 export type CanvasSelectionUpdated = {
   options: IEvent;
   isEditingRef: React.MutableRefObject<boolean>;

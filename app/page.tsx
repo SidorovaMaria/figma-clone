@@ -13,10 +13,11 @@ import {
   handleCanvasMouseDown,
   handleCanvasMouseUp,
   handleCanvasObjectModified,
+  handleCanvasObjectMoving,
+  handleCanvasObjectScaling,
   handleCanvasResize,
   handleCanvasSelectionCreated,
   handleCanvasSelectionUpdated,
-  handleCanvasZoom,
   initializeFabric,
   renderCanvas,
 } from "@/lib/canvas";
@@ -225,7 +226,6 @@ export default function Home() {
      
      */
     canvas.on("selection:created", (options) => {
-      console.log(options);
       handleCanvasSelectionCreated({
         options,
         isEditingRef,
@@ -237,6 +237,18 @@ export default function Home() {
       handleCanvasSelectionUpdated({
         options,
         isEditingRef,
+        setElementAttributes,
+      });
+    });
+    canvas.on("object:scaling", (options) => {
+      handleCanvasObjectScaling({
+        options,
+        setElementAttributes,
+      });
+    });
+    canvas.on("object:moving", (options) => {
+      handleCanvasObjectMoving({
+        options,
         setElementAttributes,
       });
     });

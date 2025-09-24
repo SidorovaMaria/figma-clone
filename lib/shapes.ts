@@ -1,5 +1,5 @@
 import { CustomFabricObject, ImageUpload, ModifyShape } from "@/types/type";
-import { Circle, FabricImage, IText, Line, Polygon, Rect, Triangle, util } from "fabric";
+import { Circle, Ellipse, FabricImage, IText, Line, Polygon, Rect, Triangle, util } from "fabric";
 import { ITextOptions } from "fabric/fabric-impl";
 import { read } from "fs";
 import { v4 as uuid } from "uuid";
@@ -153,20 +153,11 @@ export const modifyShape = ({
     });
     selectedElement.setCoords();
   }
-
   // if  property is width or height, set the scale of the selected element
   if (property === "width") {
-    if (selectedElement.type === "circle") {
-      console.log("Circle width change not supported");
-      return;
-    }
     selectedElement.set("scaleX", 1);
     selectedElement.set("width", value);
   } else if (property === "height") {
-    if (selectedElement.type === "circle") {
-      console.log("Circle height change not supported");
-      return;
-    }
     selectedElement.set("scaleY", 1);
     selectedElement.set("height", value);
   } else {
