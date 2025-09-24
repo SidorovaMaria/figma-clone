@@ -1,4 +1,4 @@
-import { navElement, shapeElement } from "@/types/type";
+import { ActiveElement, navElement, shapeElement } from "@/types/type";
 
 export const COLORS = ["#EFCA08", "#00A6A6", "#FF8552", "#8AAEE5", "#F61067"];
 
@@ -76,6 +76,18 @@ export const navElements: navElement[] = [
     shortcut: "C",
   },
 ];
+export const toolBarShortCuts: Record<string, ActiveElement> = {
+  r: { icon: "/assets/rectangle.svg", name: "Rectangle", value: "rectangle" },
+  o: { icon: "/assets/circle.svg", name: "Circle", value: "circle" },
+  p: { icon: "/assets/triangle.svg", name: "Triangle", value: "triangle" },
+  l: { icon: "/assets/line.svg", name: "Line", value: "line" },
+  f: { icon: "/assets/freeform.svg", name: "Free Drawing", value: "freeform" },
+  v: { icon: "/assets/select.svg", name: "Select", value: "select" },
+  t: { icon: "/assets/text.svg", name: "Text", value: "text" },
+  c: { icon: "/assets/comments.svg", name: "Comments", value: "comments" },
+  Backspace: { icon: "/assets/delete.svg", name: "Delete", value: "delete" },
+  Delete: { icon: "/assets/delete.svg", name: "Delete", value: "delete" },
+};
 
 export const defaultNavElement = {
   icon: "/assets/select.svg",

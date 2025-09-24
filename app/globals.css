@@ -35,7 +35,7 @@ body {
   &::before {
     content: attr(data-tooltip);
     @apply absolute top-full opacity-0 px-[10px] py-[5px] text-text text-sm rounded-lg mt-2.5 bg-muted whitespace-nowrap
-    transition-opacity duration-150 ease-in;
+    transition-opacity duration-150 ease-in z-50;
   }
   &:hover::before {
     @apply opacity-100;

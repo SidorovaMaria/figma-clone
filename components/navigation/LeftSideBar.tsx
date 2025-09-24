@@ -3,6 +3,7 @@ import { getShapeInfo } from "@/lib/utils";
 import { Canvas } from "fabric";
 import Image from "next/image";
 import React from "react";
+import ConfirmResetModal from "../modals/ConfirmResetModal";
 
 const LeftSideBar = ({ shapes }: { shapes: Array<any> }) => {
   return (

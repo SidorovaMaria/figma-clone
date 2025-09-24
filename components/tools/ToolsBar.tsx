@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { navElements } from "@/constants";
+import { useShortcut } from "@/hooks/useShortcut";
+import { toolBarShortcuts } from "@/lib/key-events";
 import { ActiveElement, shapeElement } from "@/types/type";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
@@ -15,73 +17,10 @@ type ToolsBarProps = {
 // Creating using RADIX UI
 const ToolsBar = ({ handleActiveElement, activeElement }: ToolsBarProps) => {
   //KEYBOARD SHORTCUTS
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      const t = e.target as HTMLElement | null;
-      if (!t) return;
-      const tag = t.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || t.isContentEditable) return;
-
-      if (e.key === "r") {
-        handleActiveElement({
-          name: "Rectangle",
-          value: "rectangle",
-          icon: "/assets/rectangle.svg",
-        });
-      }
-      if (e.key === "o") {
-        handleActiveElement({
-          name: "Circle",
-          value: "circle",
-          icon: "/assets/circle.svg",
-        });
-      }
-      if (e.key === "p") {
-        handleActiveElement({
-          name: "Triangle",
-          value: "triangle",
-          icon: "/assets/triangle.svg",
-        });
-      }
-      if (e.key === "l") {
-        handleActiveElement({
-          name: "Line",
-          value: "line",
-          icon: "/assets/line.svg",
-        });
-      }
-      if (e.key === "f") {
-        handleActiveElement({
-          name: "Free Drawing",
-          value: "freeform",
-          icon: "/assets/freeform.svg",
-        });
-      }
-      if (e.key === "v") {
-        handleActiveElement({
-          name: "Select",
-          value: "select",
-          icon: "/assets/select.svg",
-        });
-      }
-      if (e.key === "t") {
-        handleActiveElement({
-          name: "Text",
-          value: "text",
-          icon: "/assets/text.svg",
-        });
-      }
-      if (e.key === "Backspace" || e.key === "Delete") {
-        handleActiveElement({
-          name: "Delete",
-          value: "delete",
-          icon: "/assets/delete.svg",
-        });
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [handleActiveElement]);
+  useShortcut({
+    bindings: toolBarShortcuts(handleActiveElement),
+    options: { preventDefault: true },
+  });
   const isActive = useMemo(
     () => (value: string | Array<ActiveElement>) =>
       (activeElement && activeElement.value === value) ||
@@ -183,7 +122,7 @@ export const ShapesMenu = ({
           side="bottom"
           position="popper"
           className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[side=bottom]:translate-y-4 -translate-x-8
-          backdrop-blur-xl bg-muted/70 border border-primary/30 rounded-md shadow-md overflow-hidden relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto 
+          backdrop-blur-xl bg-muted/70 border border-primary/30 rounded-md shadow-md overflow-hidden relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto
        "
         >
           <Select.Viewport className=" h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1">
@@ -191,8 +130,7 @@ export const ShapesMenu = ({
               <Select.Item
                 value={elem.value as string}
                 key={elem.name}
-                className={`flex h-fit justify-between gap-10  px-4 py-2.5 focus:border-none no-ring cursor-pointer hover:bg-secondary rounded-md disabled:pointer-events-none disabled:opacity-50 data-[highlighted]:bg-secondary data-[highlighted]:text-text`}
-                disabled={elem.value === selectedValue}
+                className={`flex h-fit justify-between gap-10  px-4 py-2.5 focus:border-none no-ring cursor-pointer hover:bg-secondary rounded-md `}
               >
                 <div className="group flex items-center gap-2">
                   <Image

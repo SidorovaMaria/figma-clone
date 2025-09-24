@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Live from "@/components/Live";
 import NavBar from "@/components/navigation/NavBar";
 import LeftSideBar from "@/components/navigation/LeftSideBar";
 import RightSideBar from "@/components/navigation/RightSideBar";
 import { ActiveElement, Attributes } from "@/types/type";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { Canvas, FabricObject } from "fabric";
 
 import {
@@ -18,10 +19,17 @@ import {
   renderCanvas,
 } from "@/lib/canvas";
 import { DEFAULT_FULL_COLOR } from "@/lib/shapes";
-import { useMutation, useStorage } from "@liveblocks/react/suspense";
+import { useMutation, useRedo, useStorage, useUndo } from "@liveblocks/react/suspense";
 import { defaultNavElement } from "@/constants";
+import { buildEditorBindings, handleDelete } from "@/lib/key-events";
+import { useShortcut } from "@/hooks/useShortcut";
 
 export default function Home() {
+  /**
+   * Undo/Redoc hook provided by LiveBlocks that allow you to undo and redo mutations
+   */
+  const undo = useUndo();
+  const redo = useRedo();
   /**
    * useStorage is a hook provided by Liveblocks that allows you to store
    * data in a key-value store and automatically sync it with other users
@@ -113,6 +121,11 @@ export default function Home() {
     }
     return canvasObjects.size === 0;
   }, []);
+  const deleteShapeFromStorage = useMutation(({ storage }, shapeId) => {
+    const canvasObjects = storage.get("canvasObjects");
+    if (!canvasObjects || canvasObjects.size === 0) return true;
+    canvasObjects.delete(shapeId);
+  }, []);
   const handleActiveElement = (element: ActiveElement) => {
     setActiveElement(element);
     switch (element?.value) {
@@ -122,6 +135,11 @@ export default function Home() {
         fabricRef.current?.clear();
         setActiveElement(defaultNavElement);
         //Delete all objects from the canvas and storage
+        break;
+      case "delete":
+        handleDelete(fabricRef.current as any, deleteShapeFromStorage);
+        setActiveElement(defaultNavElement);
+        //Handle Delet one Item
         break;
     }
     selectedShapeRef.current = element?.value as string;
@@ -219,6 +237,16 @@ export default function Home() {
       activeObjectRef,
     });
   }, [canvasObjects]);
+  useShortcut({
+    bindings: buildEditorBindings({
+      canvas: fabricRef.current,
+      undo,
+      redo,
+      syncShapeInStorage,
+      deleteShapeFromStorage,
+    }),
+    options: { preventDefault: true },
+  });
 
   return (
     <main className="h-screen  overflow-hidden">

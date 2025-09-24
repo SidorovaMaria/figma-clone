@@ -6,7 +6,7 @@ import {
   CanvasObjectModified,
   RenderCanvasArgs,
 } from "@/types/type";
-import { Canvas, FabricObject, PencilBrush, util } from "fabric";
+import { Canvas, FabricObject, PencilBrush, Point, util } from "fabric";
 
 import { createFabricShape } from "./shapes";
 import { IEvent } from "fabric/fabric-impl";
