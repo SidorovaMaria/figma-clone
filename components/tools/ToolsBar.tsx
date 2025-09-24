@@ -90,6 +90,13 @@ export const ShapesMenu = ({
   return (
     <Select.Root
       value={selectedValue}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) return;
+        // when opening the dropdown, set the active element to the first option if the current active element is not in the options
+        if (!options.some((o: shapeElement) => o?.value === activeElement?.value)) {
+          handleActiveElement(options[0] as ActiveElement);
+        }
+      }}
       onValueChange={(value) => {
         const selected = options.find((o: shapeElement) => o.value === value);
         if (selected) handleActiveElement(selected);

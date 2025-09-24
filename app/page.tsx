@@ -228,6 +228,7 @@ export default function Home() {
        */
       canvas.dispose();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canvasRef]);
   // render the canvas when the canvasObjects from live storage changes
   useEffect(() => {
