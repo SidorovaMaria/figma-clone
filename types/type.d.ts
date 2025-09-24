@@ -25,6 +25,10 @@ export type ShapeData = {
 };
 
 export type Attributes = {
+  x: string;
+  y: string;
+  angle: string;
+  opacity: string;
   width: string;
   height: string;
   fontSize: string;
@@ -106,4 +110,29 @@ export type RenderCanvasArgs = {
   fabricRef: React.MutableRefObject<Canvas | null>;
   canvasObjects: any;
   activeObjectRef: any;
+};
+export type CanvasSelectionCreated = {
+  options: IEvent;
+  isEditingRef: React.MutableRefObject<boolean>;
+  setElementAttributes: React.Dispatch<React.SetStateAction<Attributes>>;
+};
+export type CanvasSelectionUpdated = {
+  options: IEvent;
+  isEditingRef: React.MutableRefObject<boolean>;
+  setElementAttributes: React.Dispatch<React.SetStateAction<Attributes>>;
+};
+export type RightSideBarProps = {
+  elementAttributes: Attributes;
+  setElementAttributes: React.Dispatch<React.SetStateAction<Attributes>>;
+  fabricRef: React.RefObject<Canvas>;
+  isEditingRef: React.MutableRefObject<boolean>;
+  activeObjectRef: React.MutableRefObject<FabricObject | null>;
+  syncShapeInStorage: (shape: FabricObject) => void;
+};
+export type ModifyShape = {
+  canvas: Canvas;
+  property: string;
+  value: any;
+  activeObjectRef: React.MutableRefObject<FabricObject | null>;
+  syncShapeInStorage: (shape: FabricObject) => void;
 };

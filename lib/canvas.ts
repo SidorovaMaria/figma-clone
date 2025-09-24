@@ -4,6 +4,8 @@ import {
   CanvasMouseMove,
   CanvasMouseUp,
   CanvasObjectModified,
+  CanvasSelectionCreated,
+  CanvasSelectionUpdated,
   RenderCanvasArgs,
 } from "@/types/type";
 import { Canvas, FabricObject, PencilBrush, Point, util } from "fabric";
@@ -272,4 +274,62 @@ export const handleCanvasObjectModified = ({
   } else {
     syncShapeInStorage(target as FabricObject);
   }
+};
+export const handleCanvasSelectionCreated = ({
+  options,
+  isEditingRef,
+  setElementAttributes,
+}: CanvasSelectionCreated) => {
+  //If user is editing manually, do not override selection
+  if (isEditingRef.current) return;
+  //if no elements selected, return
+  if (!options?.selected) return;
+  //Get Selected Element
+
+  const selectedElement = options?.selected[0] as FabricObject;
+
+  // If Only One Element is Selected set element attributes
+  if (selectedElement && options.selected.length === 1) {
+    if (selectedElement.width === undefined || selectedElement.height === undefined) {
+      console.log("No width or height");
+      return;
+    }
+    const scaledWidth = selectedElement?.scaleX
+      ? selectedElement?.width * selectedElement?.scaleX
+      : selectedElement?.width;
+    const scaledHeight = selectedElement?.scaleY
+      ? selectedElement?.height * selectedElement?.scaleY
+      : selectedElement?.height;
+    setElementAttributes({
+      x: selectedElement?.top?.toFixed(0).toString() || "",
+      y: selectedElement?.left?.toFixed(0).toString() || "",
+      angle: selectedElement?.angle?.toFixed(0).toString() || "",
+      opacity: selectedElement?.opacity?.toFixed(2).toString() || "",
+      width: scaledWidth?.toFixed(0).toString() || "",
+      height: scaledHeight?.toFixed(0).toString() || "",
+      fill: selectedElement?.fill?.toString() || "",
+      //@ts-expect-error might not have stroke property
+      stroke: selectedElement?.stroke || "",
+      //@ts-expect-error might not be text object
+      fontSize: selectedElement?.fontSize || "",
+      //@ts-expect-error might not be text object
+      fontFamily: selectedElement?.fontFamily || "",
+      //@ts-expect-error might not be text object
+      fontWeight: selectedElement?.fontWeight || "",
+    });
+  }
+};
+export const handleCanvasSelectionUpdated = ({
+  options,
+  isEditingRef,
+  setElementAttributes,
+}: CanvasSelectionUpdated) => {
+  if (options.deselected) {
+    isEditingRef.current = false;
+  }
+  handleCanvasSelectionCreated({
+    options,
+    isEditingRef,
+    setElementAttributes,
+  });
 };

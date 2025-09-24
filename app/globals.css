@@ -5,10 +5,12 @@
   --color-text-muted: #a1a1aa;
   --color-background: #0a0b13;
   --color-muted: #14121d;
+  --color-border: #444444;
   --color-primary: #90acdd;
   --color-secondary: #832969;
   --color-accent: #4dd2d2;
   --color-default-fill: #d9d9d9;
+
   --font-rubik: var(--font-rubik);
   --font-days-one: var(--font-days-one);
 }

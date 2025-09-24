@@ -14,6 +14,8 @@ import {
   handleCanvasMouseUp,
   handleCanvasObjectModified,
   handleCanvasResize,
+  handleCanvasSelectionCreated,
+  handleCanvasSelectionUpdated,
   handleCanvasZoom,
   initializeFabric,
   renderCanvas,
@@ -169,6 +171,10 @@ export default function Home() {
     fontWeight: "",
     fill: DEFAULT_FULL_COLOR || "#d9d9d9",
     stroke: DEFAULT_FULL_COLOR || "#d9d9d9",
+    x: "",
+    y: "",
+    angle: "",
+    opacity: "",
   });
 
   useEffect(() => {
@@ -210,6 +216,28 @@ export default function Home() {
       handleCanvasObjectModified({
         options,
         syncShapeInStorage,
+      });
+    });
+    /**
+     * listen to the selection created event on the canvas which is fired
+     * when the user selects an object on the canvas.
+     *
+     
+     */
+    canvas.on("selection:created", (options) => {
+      console.log(options);
+      handleCanvasSelectionCreated({
+        options,
+        isEditingRef,
+        setElementAttributes,
+      });
+    });
+
+    canvas.on("selection:updated", (options) => {
+      handleCanvasSelectionUpdated({
+        options,
+        isEditingRef,
+        setElementAttributes,
       });
     });
 
@@ -277,7 +305,14 @@ export default function Home() {
       <section className="flex h-full flex-row">
         <LeftSideBar shapes={Array.from(canvasObjects)} />
         <Live canvasRef={canvasRef} />
-        <RightSideBar />
+        <RightSideBar
+          elementAttributes={elementAttributes}
+          setElementAttributes={setElementAttributes}
+          fabricRef={fabricRef as RefObject<Canvas>}
+          isEditingRef={isEditingRef}
+          activeObjectRef={activeObjectRef}
+          syncShapeInStorage={syncShapeInStorage}
+        />
       </section>
     </main>
   );

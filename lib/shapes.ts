@@ -1,4 +1,4 @@
-import { CustomFabricObject, ImageUpload } from "@/types/type";
+import { CustomFabricObject, ImageUpload, ModifyShape } from "@/types/type";
 import { Circle, FabricImage, IText, Line, Polygon, Rect, Triangle, util } from "fabric";
 import { ITextOptions } from "fabric/fabric-impl";
 import { read } from "fs";
@@ -123,4 +123,59 @@ export const handleImageUpload = ({ file, canvas, shapeRef, syncShapeInStorage }
     canvas.current?.requestRenderAll();
   };
   reader.readAsDataURL(file);
+};
+export const modifyShape = ({
+  canvas,
+  property,
+  value,
+  activeObjectRef,
+  syncShapeInStorage,
+}: ModifyShape) => {
+  const selectedElement = canvas.getActiveObject();
+
+  if (!selectedElement || selectedElement?.type === "activeSelection") return;
+  if (property === "x") {
+    selectedElement.set("left", parseInt(value, 10));
+    selectedElement.setCoords();
+  } else if (property === "y") {
+    selectedElement.set("top", parseInt(value, 10));
+    selectedElement.setCoords();
+  }
+  //if change angle change origin to center and relocate to the prvios position
+  else if (property === "angle") {
+    const center = selectedElement.getCenterPoint();
+    selectedElement.set({
+      originX: "center",
+      originY: "center",
+      angle: parseInt(value, 10),
+      left: center.x,
+      top: center.y,
+    });
+    selectedElement.setCoords();
+  }
+
+  // if  property is width or height, set the scale of the selected element
+  if (property === "width") {
+    if (selectedElement.type === "circle") {
+      console.log("Circle width change not supported");
+      return;
+    }
+    selectedElement.set("scaleX", 1);
+    selectedElement.set("width", value);
+  } else if (property === "height") {
+    if (selectedElement.type === "circle") {
+      console.log("Circle height change not supported");
+      return;
+    }
+    selectedElement.set("scaleY", 1);
+    selectedElement.set("height", value);
+  } else {
+    if (selectedElement[property as keyof object] === value) return;
+    selectedElement.set(property as keyof object, value);
+  }
+
+  // set selectedElement to activeObjectRef
+  activeObjectRef.current = selectedElement;
+
+  syncShapeInStorage(selectedElement);
 };
