@@ -8,7 +8,7 @@
   --color-border: #444444;
   --color-primary: #90acdd;
   --color-secondary: #832969;
-  --color-accent: #4dd2d2;
+  --color-accent: #1da0a0;
   --color-default-fill: #d9d9d9;
 
   --font-rubik: var(--font-rubik);
@@ -79,4 +79,27 @@ body {
 }
 @utility animate-out {
   animation: animate-out 0.3s ease-in forwards;
+}
+
+@layer components {
+  .input-container {
+    @apply flex flex-row gap-1 w-full mb-2 bg-primary/20 p-1 rounded-md border-2 border-transparent has-focus-within:bg-primary/30 has-focus:border-accent
+    has-disabled:pointer-events-none has-disabled:opacity-50;
+  }
+
+  .input-field {
+    @apply w-full bg-transparent text-xs outline-none rounded px-1 no-ring;
+  }
+  /* Chrome, Safari, Edge, Opera (WebKit/Blink) */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0; /* optional */
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield; /* modern fallback */
+  }
 }

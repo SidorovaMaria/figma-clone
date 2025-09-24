@@ -311,6 +311,8 @@ export const handleCanvasSelectionCreated = ({
       fontFamily: selectedElement?.fontFamily || "",
       //@ts-expect-error might not be text object
       fontWeight: selectedElement?.fontWeight || "",
+      //@ts-expect-error might not be text object
+      radius: selectedElement?.rx?.toString() || "",
     });
   }
 };
@@ -352,6 +354,21 @@ export const handleCanvasObjectScaling = ({
     ...prev,
     width: scaledWidth?.toFixed(0).toString() || "",
     height: scaledHeight?.toFixed(0).toString() || "",
+  }));
+};
+export const handleCanvasObjectRotating = ({
+  options,
+  setElementAttributes,
+}: CanvasObjectScaling) => {
+  const selectedElement = options.target;
+  if (!selectedElement) return;
+  if (selectedElement.angle === undefined) {
+    console.log("No angle");
+    return;
+  }
+  setElementAttributes((prev) => ({
+    ...prev,
+    angle: selectedElement.angle?.toFixed(0).toString() || "",
   }));
 };
 export const handleCanvasObjectMoving = ({

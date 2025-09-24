@@ -36,6 +36,7 @@ export type Attributes = {
   fontWeight: string;
   fill: string;
   stroke: string;
+  radius: string;
 };
 export type shapeElement = {
   icon: string;

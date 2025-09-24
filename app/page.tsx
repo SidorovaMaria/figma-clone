@@ -14,6 +14,7 @@ import {
   handleCanvasMouseUp,
   handleCanvasObjectModified,
   handleCanvasObjectMoving,
+  handleCanvasObjectRotating,
   handleCanvasObjectScaling,
   handleCanvasResize,
   handleCanvasSelectionCreated,
@@ -176,6 +177,7 @@ export default function Home() {
     y: "",
     angle: "",
     opacity: "",
+    radius: "",
   });
 
   useEffect(() => {
@@ -226,6 +228,7 @@ export default function Home() {
      
      */
     canvas.on("selection:created", (options) => {
+      console.log(options.selected);
       handleCanvasSelectionCreated({
         options,
         isEditingRef,
@@ -246,6 +249,13 @@ export default function Home() {
         setElementAttributes,
       });
     });
+    canvas.on("object:rotating", (options) => {
+      handleCanvasObjectRotating({
+        options,
+        setElementAttributes,
+      });
+    });
+
     canvas.on("object:moving", (options) => {
       handleCanvasObjectMoving({
         options,

@@ -6,25 +6,24 @@ const layoutOptions = [
   { label: "H", property: "height", placeholder: "0" },
 ];
 type LayoutProps = {
+  objectType?: string;
   width: string;
   height: string;
   isEditingRef: React.MutableRefObject<boolean>;
   handleInputChange: (property: string, value: string | boolean) => void;
 };
-const Layout = ({ width, height, isEditingRef, handleInputChange }: LayoutProps) => {
+const Layout = ({ width, height, isEditingRef, objectType, handleInputChange }: LayoutProps) => {
   return (
     <section className="flex flex-col px-5 py-3 border-t border-border gap-3">
       <h4 className="text-xs uppercase">Layout</h4>
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 gap-x-2 gap-y-1">
         {layoutOptions.map(({ label, property, placeholder }) => (
-          <div
-            className="flex flex-row gap-1 w-fit mb-2 bg-primary/20 p-1 rounded-md"
-            key={property}
-          >
+          <div className="input-container" key={property}>
             <label className="text-xs" htmlFor={property}>
               {label}
             </label>
             <input
+              disabled={objectType === "circle"}
               type="number"
               id={property}
               value={property === "width" ? width : height}
@@ -33,7 +32,7 @@ const Layout = ({ width, height, isEditingRef, handleInputChange }: LayoutProps)
                 if (!isEditingRef.current) isEditingRef.current = true;
                 handleInputChange(property, e.target.value);
               }}
-              className="w-16 bg-transparent text-xs outline-none border border-border rounded px-1"
+              className="input-field"
             />
           </div>
         ))}

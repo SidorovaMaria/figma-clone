@@ -152,6 +152,15 @@ export const modifyShape = ({
       top: center.y,
     });
     selectedElement.setCoords();
+  } else if (property === "radius") {
+    if (selectedElement.type === "circle" || selectedElement.type === "ellipse") {
+      console.log("Disabled radius for circle and ellipse");
+      return;
+    }
+    selectedElement.set({
+      rx: parseInt(value, 10),
+      ry: parseInt(value, 10),
+    });
   }
   // if  property is width or height, set the scale of the selected element
   if (property === "width") {
