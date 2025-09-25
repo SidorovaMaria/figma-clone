@@ -87,3 +87,23 @@ export const getShapeInfo = (shapeType: string) => {
       };
   }
 };
+
+const HEX3 = /^#?[0-9a-fA-F]{3}$/;
+const HEX6 = /^#?[0-9a-fA-F]{6}$/;
+
+export const toHash = (s: string) => (s.startsWith("#") ? s : `#${s}`);
+// Expand #RGB to #RRGGBB
+const expand3 = (h: string) => {
+  const s = h.replace("#", "");
+  if (!HEX3.test(h)) return null;
+  const [r, g, b] = s.split("");
+  return `#${r}${r}${g}${g}${b}${b}`.toLowerCase();
+};
+// Return #RRGGBB or null if invalid
+export const normalizeHex = (h: string): string | null => {
+  // Accept #RGB or #RRGGBB (with or without #), return #RRGGBB
+  const v = h.trim();
+  if (HEX6.test(v)) return toHash(v).toLowerCase();
+  const e3 = expand3(v);
+  return e3 ?? null;
+};

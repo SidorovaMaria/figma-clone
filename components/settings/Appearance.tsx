@@ -1,10 +1,8 @@
 import React from "react";
 
 import Image from "next/image";
-const appearanceOptions = [
-  { label: "opacity", property: "opacity", placeholder: "100", iconSrc: "/assets/opacity.svg" },
-  { label: "Radius", property: "radius", placeholder: "0", iconSrc: "/assets/radius.svg" },
-];
+import { CornersIcon, TransparencyGridIcon } from "@radix-ui/react-icons";
+
 type LayoutProps = {
   objectType: string;
   opacity: string;
@@ -21,12 +19,12 @@ const Appearance = ({
 }: LayoutProps) => {
   return (
     <section className="flex flex-col px-5 py-3 border-t border-border gap-3">
-      <h4 className="text-xs uppercase">Appearance</h4>
+      <h4 className="text-xs ">Appearance</h4>
       <div className="grid grid-cols-2 gap-x-2 gap-y-1 w-full">
         {/* Opacity */}
         <div className="input-container items-center" title="Opacity">
           <label className="text-xs" htmlFor="opacity">
-            <Image src="/assets/opacity.svg" alt="Opacity" width={24} height={24} />
+            <TransparencyGridIcon />
           </label>
           <input
             type="number"
@@ -34,6 +32,9 @@ const Appearance = ({
             step={10}
             value={Math.round(Number(opacity) * 100)}
             placeholder={"100"}
+            onBlur={() => {
+              isEditingRef.current = false;
+            }}
             onChange={(e) => {
               if (!isEditingRef.current) isEditingRef.current = true;
               // Convert percentage back to decimal for opacity
@@ -49,7 +50,7 @@ const Appearance = ({
         {/* Radius */}
         <div className="input-container items-center" title="Corner radius">
           <label className="text-xs" htmlFor="radius">
-            <Image src="/assets/radius.svg" alt="Radius" width={24} height={24} />
+            <CornersIcon />
           </label>
           <input
             type="number"
@@ -57,6 +58,9 @@ const Appearance = ({
             step={10}
             value={Math.round(Number(radius))}
             placeholder={"100"}
+            onBlur={() => {
+              isEditingRef.current = false;
+            }}
             disabled={objectType === "rect" ? false : true}
             onChange={(e) => {
               if (!isEditingRef.current) isEditingRef.current = true;

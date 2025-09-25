@@ -2,8 +2,9 @@ import { CustomFabricObject, ImageUpload, ModifyShape } from "@/types/type";
 import { Circle, Ellipse, FabricImage, IText, Line, Polygon, Rect, Triangle, util } from "fabric";
 import { ITextOptions } from "fabric/fabric-impl";
 import { read } from "fs";
+import { useMemo, useRef } from "react";
 import { v4 as uuid } from "uuid";
-export const DEFAULT_FULL_COLOR = "#8c8c8c";
+export const DEFAULT_FILL_COLOR = "#8c8c8c";
 
 export const createRectangle = (pointer: PointerEvent) => {
   /**
@@ -16,7 +17,8 @@ export const createRectangle = (pointer: PointerEvent) => {
     top: pointer.y,
     width: 100,
     height: 100,
-    fill: DEFAULT_FULL_COLOR || "#D9D9D9",
+    strokeWidth: 0,
+    fill: DEFAULT_FILL_COLOR || "#D9D9D9",
     objectId: uuid(),
   } as CustomFabricObject<Rect>);
   return rectangle;
@@ -32,7 +34,8 @@ export const createCircle = (pointer: PointerEvent) => {
     left: pointer.x,
     top: pointer.y,
     radius: 50,
-    fill: DEFAULT_FULL_COLOR || "#D9D9D9",
+    strokeWidth: 0,
+    fill: DEFAULT_FILL_COLOR || "#D9D9D9",
     objectId: uuid(),
   });
 
@@ -51,7 +54,8 @@ export const createTriangle = (pointer: PointerEvent) => {
     top: pointer.y,
     width: 100,
     height: 80,
-    fill: DEFAULT_FULL_COLOR || "#D9D9D9",
+    strokeWidth: 0,
+    fill: DEFAULT_FILL_COLOR || "#D9D9D9",
     objectId: uuid(),
   } as CustomFabricObject<Rect>);
   return triangle;
@@ -64,7 +68,7 @@ export const createLine = (pointer: PointerEvent) => {
    * //KEYBOARD SHORTCUT: L (as in Figma)
    */
   const line = new Line([pointer.x, pointer.y, pointer.x + 100, pointer.y], {
-    stroke: DEFAULT_FULL_COLOR || "#D9D9D9",
+    stroke: DEFAULT_FILL_COLOR || "#D9D9D9",
     strokeWidth: 2,
     objectId: uuid(),
   });
@@ -83,7 +87,8 @@ export const createText = (pointer: PointerEvent, text: string) => {
     fontSize: 16,
     fontFamily: "Rubik",
     fontWeight: "400",
-    fill: DEFAULT_FULL_COLOR || "#D9D9D9",
+    strokeWidth: 0,
+    fill: DEFAULT_FILL_COLOR || "#D9D9D9",
     objectId: uuid(),
   });
   return iText;
@@ -176,6 +181,7 @@ export const modifyShape = ({
 
   // set selectedElement to activeObjectRef
   activeObjectRef.current = selectedElement;
+  // Sync the updated shape with storage
 
   syncShapeInStorage(selectedElement);
 };

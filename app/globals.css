@@ -86,6 +86,9 @@ body {
     @apply flex flex-row gap-1 w-full mb-2 bg-primary/20 p-1 rounded-md border-2 border-transparent has-focus-within:bg-primary/30 has-focus:border-accent
     has-disabled:pointer-events-none has-disabled:opacity-50;
   }
+  .input-container.select {
+    @apply focus:border-accent focus:bg-primary/30 disabled:pointer-events-none disabled:opacity-50;
+  }
 
   .input-field {
     @apply w-full bg-transparent text-xs outline-none rounded px-1 no-ring;
@@ -101,5 +104,8 @@ body {
   input[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield; /* modern fallback */
+  }
+  .toggle-group-item {
+    @apply flex size-[28px] items-center justify-center   leading-4 first:rounded-l last:rounded-r hover:bg-primary/50 focus:z-10   data-[state=on]:bg-primary no-ring cursor-pointer data-[state=on]:text-background;
   }
 }

@@ -305,6 +305,7 @@ export const handleCanvasSelectionCreated = ({
       fill: selectedElement?.fill?.toString() || "",
       //@ts-expect-error might not have stroke property
       stroke: selectedElement?.stroke || "",
+      strokeWidth: selectedElement?.strokeWidth?.toString() || "",
       //@ts-expect-error might not be text object
       fontSize: selectedElement?.fontSize || "",
       //@ts-expect-error might not be text object
@@ -313,6 +314,10 @@ export const handleCanvasSelectionCreated = ({
       fontWeight: selectedElement?.fontWeight || "",
       //@ts-expect-error might not be text object
       radius: selectedElement?.rx?.toString() || "",
+      //@ts-expect-error might not be text object
+      textAlign: selectedElement?.textAlign || "",
+      //@ts-expect-error might not be text object
+      lineHeight: selectedElement?.lineHeight?.toString() || "",
     });
   }
 };

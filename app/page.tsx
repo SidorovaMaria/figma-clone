@@ -22,7 +22,7 @@ import {
   initializeFabric,
   renderCanvas,
 } from "@/lib/canvas";
-import { DEFAULT_FULL_COLOR, handleImageUpload } from "@/lib/shapes";
+import { DEFAULT_FILL_COLOR, handleImageUpload } from "@/lib/shapes";
 import { useMutation, useRedo, useStorage, useUndo } from "@liveblocks/react/suspense";
 import { defaultNavElement } from "@/constants";
 import { buildEditorBindings, handleDelete } from "@/lib/key-events";
@@ -114,6 +114,7 @@ export default function Home() {
    * input element when the user clicks on the image item from the dropdown.
    */
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const [disableEditing, setDisableEditing] = useState(true);
 
   /**
    * activeElement is an object that wll contain the name, value and icon of the active element in the toolbar
@@ -171,13 +172,17 @@ export default function Home() {
     fontSize: "",
     fontFamily: "",
     fontWeight: "",
-    fill: DEFAULT_FULL_COLOR || "#d9d9d9",
-    stroke: DEFAULT_FULL_COLOR || "#d9d9d9",
+    fill: DEFAULT_FILL_COLOR || "#d9d9d9",
+    stroke: DEFAULT_FILL_COLOR || "#d9d9d9",
+    strokeWidth: "",
+
     x: "",
     y: "",
     angle: "",
     opacity: "",
     radius: "",
+    textAlign: "left",
+    lineHeight: "",
   });
 
   useEffect(() => {
@@ -228,7 +233,7 @@ export default function Home() {
      
      */
     canvas.on("selection:created", (options) => {
-      console.log(options.selected);
+      setDisableEditing(false);
       handleCanvasSelectionCreated({
         options,
         isEditingRef,
@@ -261,6 +266,14 @@ export default function Home() {
         options,
         setElementAttributes,
       });
+    });
+    canvas.on("selection:cleared", () => {
+      if (isEditingRef.current) {
+        console.log("in the process of editing an element");
+      } else {
+        console.log('disabling editing since "selection:cleared" fired');
+        setDisableEditing(true);
+      }
     });
 
     /**
@@ -328,6 +341,7 @@ export default function Home() {
         <LeftSideBar shapes={Array.from(canvasObjects)} />
         <Live canvasRef={canvasRef} />
         <RightSideBar
+          disableEditing={disableEditing}
           elementAttributes={elementAttributes}
           setElementAttributes={setElementAttributes}
           fabricRef={fabricRef as RefObject<Canvas>}

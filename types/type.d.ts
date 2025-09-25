@@ -36,7 +36,10 @@ export type Attributes = {
   fontWeight: string;
   fill: string;
   stroke: string;
+  strokeWidth: string;
   radius: string;
+  textAlign: string;
+  lineHeight: string;
 };
 export type shapeElement = {
   icon: string;
@@ -128,6 +131,7 @@ export type CanvasSelectionUpdated = {
   setElementAttributes: React.Dispatch<React.SetStateAction<Attributes>>;
 };
 export type RightSideBarProps = {
+  disableEditing: boolean;
   elementAttributes: Attributes;
   setElementAttributes: React.Dispatch<React.SetStateAction<Attributes>>;
   fabricRef: React.RefObject<Canvas>;
@@ -140,5 +144,10 @@ export type ModifyShape = {
   property: string;
   value: any;
   activeObjectRef: React.MutableRefObject<FabricObject | null>;
+  syncShapeInStorage: (shape: FabricObject) => void;
+};
+export type CanvasBackgroundProps = {
+  color: string;
+  canvas: Canvas;
   syncShapeInStorage: (shape: FabricObject) => void;
 };

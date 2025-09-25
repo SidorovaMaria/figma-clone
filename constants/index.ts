@@ -105,6 +105,16 @@ export const fontFamilyOptions = [
   { value: "Times New Roman", label: "Times New Roman" },
   { value: "Comic Sans MS", label: "Comic Sans MS" },
   { value: "Brush Script MT", label: "Brush Script MT" },
+  { value: "Days One", label: "Days One" },
+  { value: "Rubik", label: "Rubik" },
+  { value: "Arial", label: "Arial" },
+  { value: "Courier New", label: "Courier New" },
+  { value: "Georgia", label: "Georgia" },
+  { value: "Impact", label: "Impact" },
+  { value: "Lucida Console", label: "Lucida Console" },
+  { value: "Tahoma", label: "Tahoma" },
+  { value: "Trebuchet MS", label: "Trebuchet MS" },
+  { value: "Verdana", label: "Verdana" },
 ];
 
 export const fontSizeOptions = [
@@ -165,20 +175,67 @@ export const fontSizeOptions = [
     label: "36",
   },
 ];
-export const fontWeightOptions = [
-  {
-    value: "400",
-    label: "Normal",
-  },
-  {
-    value: "500",
-    label: "Semibold",
-  },
-  {
-    value: "600",
-    label: "Bold",
-  },
-];
+export const fontWeightName = {
+  "300": "Light",
+  "400": "Regular",
+  "500": "Medium",
+  "600": "Semibold",
+  "700": "Bold",
+  "800": "Extra Bold",
+  "900": "Black",
+};
+export const fontWeightOptions = {
+  Helvetica: [
+    { value: "400", label: "Regular" },
+    { value: "700", label: "Bold" },
+  ],
+  "Times New Roman": [
+    { value: "400", label: "Regular" },
+    { value: "700", label: "Bold" },
+  ],
+  "Comic Sans MS": [
+    { value: "400", label: "Regular" },
+    { value: "700", label: "Bold" },
+  ],
+  "Brush Script MT": [{ value: "400", label: "Regular" }],
+  "Days One": [{ value: "400", label: "Regular" }],
+  Rubik: [
+    { value: "300", label: "Light" },
+    { value: "400", label: "Regular" },
+    { value: "500", label: "Medium" },
+    { value: "600", label: "Semibold" },
+    { value: "700", label: "Bold" },
+    { value: "800", label: "Extra Bold" },
+    { value: "900", label: "Black" },
+  ],
+  Arial: [
+    { value: "400", label: "Regular" },
+    { value: "700", label: "Bold" },
+  ],
+  "Courier New": [
+    { value: "400", label: "Regular" },
+    { value: "700", label: "Bold" },
+  ],
+  Georgia: [
+    { value: "400", label: "Regular" },
+    { value: "700", label: "Bold" },
+  ],
+  Impact: [{ value: "400", label: "Regular" }],
+  "Lucida Console": [{ value: "400", label: "Regular" }],
+  Tahoma: [
+    { value: "400", label: "Regular" },
+    { value: "700", label: "Bold" },
+  ],
+  "Trebuchet MS": [
+    { value: "400", label: "Regular" },
+    { value: "700", label: "Bold" },
+  ],
+  Verdana: [
+    { value: "400", label: "Regular" },
+    { value: "700", label: "Bold" },
+  ],
+} as const;
+
 export const alignmentOptions = [
   { value: "left", label: "Align Left", icon: "/assets/align-left.svg" },
   {
