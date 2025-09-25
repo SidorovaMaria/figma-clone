@@ -21,6 +21,38 @@ export const handleCopy = (canvas: fabric.Canvas) => {
   }
   return activeObjects;
 };
+export const handlePasteHere = async ({
+  rightClickPosition,
+  syncShapeInStorage,
+  canvas,
+}: {
+  rightClickPosition: { x: number; y: number };
+  canvas: Canvas;
+  syncShapeInStorage: (object: FabricObject) => void;
+}) => {
+  const clipboard = localStorage.getItem("clipboard");
+  if (!clipboard) return;
+  const serialized = JSON.parse(clipboard);
+  try {
+    if (serialized.type !== "ActiveSelection") {
+      const obj = await util.enlivenObjects<FabricObject>(serialized);
+      if (!obj || obj.length === 0) return;
+      for (const o of obj) {
+        o.set({ left: rightClickPosition.x, top: rightClickPosition.y, objectId: uuidv4() });
+        canvas.add(o as any);
+        syncShapeInStorage(o as any);
+        canvas.setActiveObject(o as any);
+        canvas.requestRenderAll();
+      }
+    } else {
+      //TODO LATER
+    }
+  } catch (e) {
+    console.error("Error parsing clipboard data:", e);
+    return;
+  }
+};
+
 export const handlePaste = async (
   canvas: Canvas,
   syncShapeInStorage: (object: FabricObject) => void

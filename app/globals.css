@@ -74,11 +74,67 @@ body {
     transform: translateY(-10px) scale(0.95);
   }
 }
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes contextMenuOpen {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+@keyframes contextMenuClose {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-2px);
+  }
+}
+@keyframes slide-from-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@utility context-menu-open {
+  animation: contextMenuOpen 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@utility context-menu-close {
+  animation: contextMenuClose 0.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 @utility animate-in {
-  animation: animate-in 0.3s ease-out forwards;
+  animation: animate-in 0.3s ease-out forwards, fade-in 0.3s ease-out forwards;
 }
 @utility animate-out {
-  animation: animate-out 0.3s ease-in forwards;
+  animation: animate-out 0.3s ease-in forwards, fade-out 0.3s ease-in forwards;
+}
+@utility slide-from-left {
+  animation: slide-from-left 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @layer components {
@@ -107,5 +163,11 @@ body {
   }
   .toggle-group-item {
     @apply flex size-[28px] items-center justify-center   leading-4 first:rounded-l last:rounded-r hover:bg-primary/50 focus:z-10   data-[state=on]:bg-primary no-ring cursor-pointer data-[state=on]:text-background;
+  }
+  .context-menu-style {
+    @apply backdrop-blur-xl bg-muted/70 border border-primary/30 rounded-md shadow-md overflow-hidden relative z-50;
+  }
+  .context-menu-item {
+    @apply flex h-fit justify-between gap-10 rounded-md px-3.5 py-2 focus:border-none no-ring cursor-pointer hover:bg-primary/50 text-sm text-text/80 hover:text-text transition-colors duration-300 ease-in-out;
   }
 }

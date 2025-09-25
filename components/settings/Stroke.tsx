@@ -1,7 +1,7 @@
 import { DEFAULT_FILL_COLOR } from "@/lib/shapes";
 import { normalizeHex } from "@/lib/utils";
 import { BorderWidthIcon } from "@radix-ui/react-icons";
-import React from "react";
+import React, { useEffect } from "react";
 type StrokeProps = {
   stroke: string;
   strokeWidth: string;

@@ -116,6 +116,7 @@ export type RenderCanvasArgs = {
   activeObjectRef: any;
 };
 export type CanvasSelectionCreated = {
+  selectedElementRef: React.MutableRefObject<ActiveElement | null>;
   options: IEvent;
   isEditingRef: React.MutableRefObject<boolean>;
   setElementAttributes: React.Dispatch<React.SetStateAction<Attributes>>;
@@ -126,6 +127,7 @@ export type CanvasObjectScaling = {
 };
 
 export type CanvasSelectionUpdated = {
+  selectedElementRef: React.MutableRefObject<ActiveElement | null>;
   options: IEvent;
   isEditingRef: React.MutableRefObject<boolean>;
   setElementAttributes: React.Dispatch<React.SetStateAction<Attributes>>;

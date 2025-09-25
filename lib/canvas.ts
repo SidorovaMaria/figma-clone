@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  ActiveElement,
   CanvasMouseDown,
   CanvasMouseMove,
   CanvasMouseUp,
@@ -271,6 +272,7 @@ export const handleCanvasObjectModified = ({
   }
 };
 export const handleCanvasSelectionCreated = ({
+  selectedElementRef,
   options,
   isEditingRef,
   setElementAttributes,
@@ -282,6 +284,7 @@ export const handleCanvasSelectionCreated = ({
   //Get Selected Element
 
   const selectedElement = options?.selected[0] as FabricObject;
+  selectedElementRef.current = selectedElement as ActiveElement;
 
   // If Only One Element is Selected set element attributes
   if (selectedElement && options.selected.length === 1) {
@@ -289,6 +292,8 @@ export const handleCanvasSelectionCreated = ({
       console.log("No width or height");
       return;
     }
+
+    console.log("set activeObjectRef.current to", selectedElement);
     const scaledWidth = selectedElement?.scaleX
       ? selectedElement?.width * selectedElement?.scaleX
       : selectedElement?.width;
@@ -322,6 +327,7 @@ export const handleCanvasSelectionCreated = ({
   }
 };
 export const handleCanvasSelectionUpdated = ({
+  selectedElementRef,
   options,
   isEditingRef,
   setElementAttributes,
@@ -330,6 +336,7 @@ export const handleCanvasSelectionUpdated = ({
     isEditingRef.current = false;
   }
   handleCanvasSelectionCreated({
+    selectedElementRef,
     options,
     isEditingRef,
     setElementAttributes,

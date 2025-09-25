@@ -5,7 +5,7 @@ import NavBar from "@/components/navigation/NavBar";
 import LeftSideBar from "@/components/navigation/LeftSideBar";
 import RightSideBar from "@/components/navigation/RightSideBar";
 import { ActiveElement, Attributes } from "@/types/type";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, use, useCallback, useEffect, useRef, useState } from "react";
 import { Canvas, FabricObject } from "fabric";
 
 import {
@@ -25,7 +25,13 @@ import {
 import { DEFAULT_FILL_COLOR, handleImageUpload } from "@/lib/shapes";
 import { useMutation, useRedo, useStorage, useUndo } from "@liveblocks/react/suspense";
 import { defaultNavElement } from "@/constants";
-import { buildEditorBindings, handleDelete } from "@/lib/key-events";
+import {
+  buildEditorBindings,
+  handleCopy,
+  handleDelete,
+  handlePaste,
+  handlePasteHere,
+} from "@/lib/key-events";
 import { useShortcut } from "@/hooks/useShortcut";
 
 export default function Home() {
@@ -91,6 +97,8 @@ export default function Home() {
    * the component re-renders. Refs help us with that.
    */
   const selectedShapeRef = useRef<string | null>(null);
+  const selectedElementRef = useRef<ActiveElement | null>(null);
+  const rightClickPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   /**
    * activeObjectRef is a reference to the currently active object on the canvas.
    * We want to keep track of the active object so that we can keep it in
@@ -105,6 +113,7 @@ export default function Home() {
    */
   const activeObjectRef = useRef<FabricObject | null>(null);
   const isEditingRef = useRef(false);
+
   /**
    * imageInputRef is a reference to the input element that we use to upload
    * an image to the canvas.
@@ -158,6 +167,7 @@ export default function Home() {
     }
     selectedShapeRef.current = element?.value as string;
   };
+
   /**
    * elementAttributes is an object that contains the attributes of the selected
    * element in the canvas.
@@ -175,7 +185,6 @@ export default function Home() {
     fill: DEFAULT_FILL_COLOR || "#d9d9d9",
     stroke: DEFAULT_FILL_COLOR || "#d9d9d9",
     strokeWidth: "",
-
     x: "",
     y: "",
     angle: "",
@@ -195,9 +204,9 @@ export default function Home() {
      * user clicks on the canvas
      * Event Inspector:https://fabricjs.com/api/classes/canvas/#on
      */
-    canvas.on("mouse:down", (options) =>
-      handleCanvasMouseDown({ options, canvas, selectedShapeRef, isDrawing, shapeRef })
-    );
+    canvas.on("mouse:down", (options) => {
+      handleCanvasMouseDown({ options, canvas, selectedShapeRef, isDrawing, shapeRef });
+    });
     canvas.on("mouse:up", () =>
       handleCanvasMouseUp({
         canvas,
@@ -220,12 +229,14 @@ export default function Home() {
         syncShapeInStorage,
       });
     });
+
     canvas.on("object:modified", (options) => {
       handleCanvasObjectModified({
         options,
         syncShapeInStorage,
       });
     });
+
     /**
      * listen to the selection created event on the canvas which is fired
      * when the user selects an object on the canvas.
@@ -235,6 +246,7 @@ export default function Home() {
     canvas.on("selection:created", (options) => {
       setDisableEditing(false);
       handleCanvasSelectionCreated({
+        selectedElementRef,
         options,
         isEditingRef,
         setElementAttributes,
@@ -243,6 +255,7 @@ export default function Home() {
 
     canvas.on("selection:updated", (options) => {
       handleCanvasSelectionUpdated({
+        selectedElementRef,
         options,
         isEditingRef,
         setElementAttributes,
@@ -273,7 +286,14 @@ export default function Home() {
       } else {
         console.log('disabling editing since "selection:cleared" fired');
         setDisableEditing(true);
+        selectedElementRef.current = null;
       }
+    });
+
+    canvas.on("contextmenu:before", (options) => {
+      if (!options.e) return;
+      const pointer = canvas.getPointer(options.e as PointerEvent);
+      rightClickPosition.current = { x: pointer.x, y: pointer.y };
     });
 
     /**
@@ -321,8 +341,51 @@ export default function Home() {
     options: { preventDefault: true },
   });
 
+  //Trigger ContextMenu Items Actions
+  const handleMenuContextCanvasAction = useCallback((action: string) => {
+    switch (action) {
+      case "Undo":
+        undo();
+        break;
+      case "Redo":
+        redo();
+        break;
+      case "Copy":
+        handleCopy(fabricRef.current as any);
+        break;
+      case "Paste":
+        handlePaste(fabricRef.current as any, syncShapeInStorage);
+        break;
+      case "Paste here":
+        handlePasteHere({
+          rightClickPosition: rightClickPosition.current,
+          canvas: fabricRef.current as any,
+          syncShapeInStorage,
+        });
+        break;
+      case "Cut":
+        handleCopy(fabricRef.current as any);
+        handleDelete(fabricRef.current as any, deleteShapeFromStorage);
+        break;
+      case "Show/Hide UI":
+        const leftSideBar = document.getElementById("left-sidebar");
+        const rightSideBar = document.getElementById("right-sidebar");
+        if (leftSideBar && rightSideBar) {
+          if (leftSideBar.style.display === "none") {
+            leftSideBar.style.display = "flex";
+            rightSideBar.style.display = "flex";
+          } else {
+            leftSideBar.style.display = "none";
+            rightSideBar.style.display = "none";
+          }
+        }
+        break;
+    }
+  }, []);
+
   return (
     <main className="h-screen  overflow-hidden">
+      {/* <CollaborativeApp /> */}
       <NavBar
         activeElement={activeElement}
         handleActiveElement={handleActiveElement}
@@ -339,7 +402,13 @@ export default function Home() {
       />
       <section className="flex h-full flex-row">
         <LeftSideBar shapes={Array.from(canvasObjects)} />
-        <Live canvasRef={canvasRef} />
+
+        <Live
+          canvasRef={canvasRef}
+          handleMenuContextCanvasAction={handleMenuContextCanvasAction}
+          selectedElementRef={selectedElementRef}
+        />
+
         <RightSideBar
           disableEditing={disableEditing}
           elementAttributes={elementAttributes}

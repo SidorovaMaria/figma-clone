@@ -8,6 +8,7 @@ import Appearance from "../settings/Appearance";
 import Fill from "../settings/Fill";
 import Typography from "../settings/Typography";
 import Stroke from "../settings/Stroke";
+import Export from "../settings/Export";
 
 const RightSideBar = ({
   disableEditing,
@@ -22,6 +23,7 @@ const RightSideBar = ({
   const strokeInputRef = useRef(null);
 
   const handleInputChange = (property: string, value: string | boolean) => {
+    console.log(`handleInputChange called with property: ${property}, value: ${value}`);
     if (!isEditingRef.current) isEditingRef.current = true;
 
     setElementAttributes((prev) => ({ ...prev, [property]: value }));
@@ -37,20 +39,18 @@ const RightSideBar = ({
     return fabricRef.current?.getActiveObject()?.type || null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fabricRef.current?.getActiveObject()?.objectId]);
-  const displaySeectedObjectType = () => {
-    console.log(fabricRef.current?.getActiveObject());
-  };
 
   return (
-    <section className="flex flex-col  bg-muted text-text min-w-[227px] max-w-[227px] sticky right -0 h-full max-sm:hidden select-none overflow-y-auto pb-20">
+    <section
+      className="flex flex-col  bg-muted text-text min-w-[227px] max-w-[227px] sticky right -0 h-full max-sm:hidden select-none overflow-y-auto pb-20"
+      id="right-sidebar"
+    >
       <h3 className="px-5 py-4 text-xs uppercase">Design</h3>
       {disableEditing && (
         <p className="px-5 text-xs text-primary text-center pb-4">
           Select an element to edit its properties
         </p>
       )}
-      <button onClick={displaySeectedObjectType}>Log Object Type</button>
-
       {!disableEditing && (
         <>
           <Position
@@ -102,6 +102,7 @@ const RightSideBar = ({
           />
         </>
       )}
+      <Export />
     </section>
   );
 };

@@ -3,12 +3,14 @@
 import { ReactNode } from "react";
 import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react/suspense";
 import { LiveMap } from "@liveblocks/client";
+const publicApiKey = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
 
+if (!publicApiKey) {
+  throw new Error("LIVEBLOCKS_PUBLIC_KEY is not defined, please provide it in the .env.local file");
+}
 export function Room({ children }: { children: ReactNode }) {
   return (
-    <LiveblocksProvider
-      publicApiKey={"pk_dev_ORP1gokrX0Lfcmhh8a_2I39cj8DpSLYihR6chbWH4N6Yv_-_7aFV4AI1qodv4Hh4"}
-    >
+    <LiveblocksProvider publicApiKey={publicApiKey as string}>
       <RoomProvider
         id="my-room"
         initialPresence={{

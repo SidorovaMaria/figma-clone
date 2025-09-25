@@ -1,3 +1,5 @@
+import jsPDF from "jspdf";
+
 const adjectives = [
   "Happy",
   "Creative",
@@ -106,4 +108,28 @@ export const normalizeHex = (h: string): string | null => {
   if (HEX6.test(v)) return toHash(v).toLowerCase();
   const e3 = expand3(v);
   return e3 ?? null;
+};
+
+export const exportToPDF = () => {
+  const canvas = document.querySelector("canvas");
+
+  if (!canvas) return;
+
+  // use jspdf
+  const doc = new jsPDF({
+    orientation: "landscape",
+    unit: "px",
+    format: [canvas.width, canvas.height],
+  });
+  doc.setFillColor("#0a0b13"); // any hex, rgb, or named color
+  doc.rect(0, 0, canvas.width, canvas.height, "F"); // "F" = fill
+
+  // get the canvas data url
+  const data = canvas.toDataURL();
+
+  // add the image to the pdf
+  doc.addImage(data, "PNG", 0, 0, canvas.width, canvas.height);
+
+  // download the pdf
+  doc.save("canvas.pdf");
 };

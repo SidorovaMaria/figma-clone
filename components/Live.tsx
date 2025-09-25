@@ -13,10 +13,17 @@ import CursorChat from "./cursor/CursorChat";
 import ReactionSelector from "./reaction/ReactionSelector";
 import { CursorMode, CursorState } from "@/types/types";
 import { Reaction, ReactionEvent } from "@/types/type";
+import Context from "./Context";
+import { FabricObject } from "fabric";
+import { ContextMenu } from "radix-ui";
+
 type Props = {
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
+  handleMenuContextCanvasAction: (action: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  selectedElementRef: React.MutableRefObject<any>;
 };
-const Live = ({ canvasRef }: Props) => {
+const Live = ({ canvasRef, handleMenuContextCanvasAction, selectedElementRef }: Props) => {
   const others = useOthers();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [{ cursor }, updateMyPresence] = useMyPresence() as any;
@@ -145,58 +152,75 @@ const Live = ({ canvasRef }: Props) => {
       state.mode === CursorMode.Reaction ? { ...state, isPressed: false } : state
     );
   };
+
+  const handleContextMenuLiveAction = useCallback((action: string) => {
+    switch (action) {
+      case "Cursor Chat":
+        setState({ mode: CursorMode.Chat, previousMessage: null, message: "" });
+        break;
+      case "Reactions":
+        setState({ mode: CursorMode.ReactionSelector });
+        break;
+    }
+  }, []);
   return (
-    <section
-      id="canvas"
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      className="relative flex h-full w-full flex-1 items-center justify-center"
-      style={{ cursor: state.mode === CursorMode.Chat ? "none" : "" }}
+    <Context
+      handleContextMenuLiveAction={handleContextMenuLiveAction}
+      handleMenuContextCanvasAction={handleMenuContextCanvasAction}
+      itemSelected={!!selectedElementRef.current}
     >
-      <canvas ref={canvasRef} />
+      <section
+        id="canvas"
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
+        className="relative flex h-full w-full flex-1 items-center justify-center"
+        style={{ cursor: state.mode === CursorMode.Chat ? "none" : "" }}
+      >
+        <canvas ref={canvasRef} />
 
-      {reactions.map((reaction) => {
-        return (
-          <FlyingReaction
-            key={reaction.timestamp.toString()}
-            x={reaction.point.x}
-            y={reaction.point.y}
-            timestamp={reaction.timestamp}
-            value={reaction.value}
-          />
-        );
-      })}
-      {cursor && (
-        <div
-          className="absolute top-0 left-0"
-          style={{
-            transform: `translateX(${cursor.x}px) translateY(${cursor.y}px)`,
-          }}
-        >
-          {state.mode === CursorMode.Chat && (
-            <>
-              <CursorChat state={state} setState={setState} updateMyPresence={updateMyPresence} />
-            </>
-          )}
-          {state.mode === CursorMode.ReactionSelector && (
-            <ReactionSelector
-              setReaction={(reaction) => {
-                setReaction(reaction);
-              }}
+        {reactions.map((reaction) => {
+          return (
+            <FlyingReaction
+              key={reaction.timestamp.toString()}
+              x={reaction.point.x}
+              y={reaction.point.y}
+              timestamp={reaction.timestamp}
+              value={reaction.value}
             />
-          )}
-          {state.mode === CursorMode.Reaction && (
-            <div className="pointer-events-none absolute top-3.5 left-1 select-none">
-              {state.reaction}
-            </div>
-          )}
-        </div>
-      )}
+          );
+        })}
+        {cursor && (
+          <div
+            className="absolute top-0 left-0"
+            style={{
+              transform: `translateX(${cursor.x}px) translateY(${cursor.y}px)`,
+            }}
+          >
+            {state.mode === CursorMode.Chat && (
+              <>
+                <CursorChat state={state} setState={setState} updateMyPresence={updateMyPresence} />
+              </>
+            )}
+            {state.mode === CursorMode.ReactionSelector && (
+              <ReactionSelector
+                setReaction={(reaction) => {
+                  setReaction(reaction);
+                }}
+              />
+            )}
+            {state.mode === CursorMode.Reaction && (
+              <div className="pointer-events-none absolute top-3.5 left-1 select-none">
+                {state.reaction}
+              </div>
+            )}
+          </div>
+        )}
 
-      <LiveCursors others={others} />
-    </section>
+        <LiveCursors others={others} />
+      </section>
+    </Context>
   );
 };
 

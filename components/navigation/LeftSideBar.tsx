@@ -7,7 +7,10 @@ import ConfirmResetModal from "../modals/ConfirmResetModal";
 
 const LeftSideBar = ({ shapes }: { shapes: Array<any> }) => {
   return (
-    <section className="flex flex-col  bg-muted text-text min-w-[227px] sticky left-0 h-full max-sm:hidden select-none overflow-y-auto pb-20">
+    <section
+      className="flex flex-col  bg-muted text-text min-w-[227px] sticky left-0 h-full max-sm:hidden select-none overflow-y-auto pb-20"
+      id="left-sidebar"
+    >
       <h3 className="border border-text-muted/30 px-5 py-4 text-xs uppercase">Layers</h3>
       <div className="flex flex-col gap-1 p-5">
         {shapes.map((shape: any) => {
