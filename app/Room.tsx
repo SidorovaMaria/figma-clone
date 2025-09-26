@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react/suspense";
-import { LiveMap } from "@liveblocks/client";
+import { LiveList, LiveMap } from "@liveblocks/client";
 const publicApiKey = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
 
 if (!publicApiKey) {
@@ -20,6 +20,7 @@ export function Room({ children }: { children: ReactNode }) {
         }}
         initialStorage={{
           canvasObjects: new LiveMap(),
+          zOrder: new LiveList([]),
         }}
       >
         <ClientSideSuspense fallback={<div>Loading…</div>}>{children}</ClientSideSuspense>

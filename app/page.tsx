@@ -33,6 +33,7 @@ import {
   handlePasteHere,
 } from "@/lib/key-events";
 import { useShortcut } from "@/hooks/useShortcut";
+import { fastEqual, useCanvasObjects, useSyncMutation } from "@/lib/live-sync";
 
 export default function Home() {
   /**
@@ -51,6 +52,8 @@ export default function Home() {
    * from theliveblocks.config.ts
    */
   const canvasObjects = useStorage((root) => root.canvasObjects);
+  // const canvasObjects = useCanvasObjects(); // to avoid tooliveblock overuse
+  const zOrder = useStorage((root) => root.zOrder);
 
   const syncShapeInStorage = useMutation(({ storage }, object) => {
     //Check if we have a valid object
@@ -63,6 +66,31 @@ export default function Home() {
     const canvasObjects = storage.get("canvasObjects");
     canvasObjects.set(objectId, dataShape);
   }, []);
+  // const syncShapeInStorage = useSyncMutation(
+  //   //@ts-expect-error just for limiting liveblock update puposes
+  //   ({ storage }, object: any /* FabricObject | null */) => {
+  //     if (!object) return;
+
+  //     // Fabric objects won't always carry this—defensive check
+  //     const { objectId } = object as { objectId?: string };
+  //     if (!objectId) return;
+
+  //     // Serialize
+  //     const dataShape = object.toJSON();
+  //     (dataShape as any).objectId = objectId;
+
+  //     // Get the map (Liveblocks LiveMap in collab, plain Map locally)
+  //     const canvasObjects = storage.get("canvasObjects") as Map<string, any>;
+
+  //     // Avoid redundant writes (helps both locally and with Liveblocks quota)
+  //     const prev = canvasObjects.get(objectId);
+  //     if (prev && fastEqual(prev, dataShape)) return;
+
+  //     // Commit
+  //     canvasObjects.set(objectId, dataShape);
+  //   },
+  //   []
+  // ); // To avoid too many liveblocks updates
 
   /** canvasRef is a reference to the canvas element that we'll use to
    * initialize the fabric canvas.
@@ -282,9 +310,8 @@ export default function Home() {
     });
     canvas.on("selection:cleared", () => {
       if (isEditingRef.current) {
-        console.log("in the process of editing an element");
+        console.log("continue editing");
       } else {
-        console.log('disabling editing since "selection:cleared" fired');
         setDisableEditing(true);
         selectedElementRef.current = null;
       }
@@ -380,6 +407,32 @@ export default function Home() {
           }
         }
         break;
+      case "Send to back":
+        const canvasBack = fabricRef.current;
+        const activeObjectBack = canvasBack?.getActiveObject();
+        if (canvasBack && activeObjectBack) {
+          canvasBack.sendObjectBackwards(activeObjectBack as any);
+          canvasBack?.requestRenderAll();
+        }
+
+        break;
+      case "Bring to front":
+        const canvasFront = fabricRef.current;
+        const activeObjectFront = canvasFront?.getActiveObject();
+        if (canvasFront && activeObjectFront) {
+          canvasFront.bringObjectForward(activeObjectFront as any);
+          canvasFront?.requestRenderAll();
+          console.log(canvasObjects);
+        }
+
+        break;
+      case "Show/Hide":
+        const selectedObj = fabricRef.current?.getActiveObject();
+        if (selectedObj) {
+          selectedObj.visible = !selectedObj.visible;
+          fabricRef.current?.requestRenderAll();
+          syncShapeInStorage(selectedObj as any);
+        }
     }
   }, []);
 
@@ -401,7 +454,13 @@ export default function Home() {
         }}
       />
       <section className="flex h-full flex-row">
-        <LeftSideBar shapes={Array.from(canvasObjects)} />
+        <LeftSideBar
+          //@ts-expect-error ref type
+          shapes={Array.from(canvasObjects)}
+          //ts-expect-error ref type
+          canvas={fabricRef}
+          selectedElementRef={selectedElementRef}
+        />
 
         <Live
           canvasRef={canvasRef}

@@ -282,9 +282,8 @@ export const handleCanvasSelectionCreated = ({
   //if no elements selected, return
   if (!options?.selected) return;
   //Get Selected Element
-
+  selectedElementRef.current = options?.selected;
   const selectedElement = options?.selected[0] as FabricObject;
-  selectedElementRef.current = selectedElement as ActiveElement;
 
   // If Only One Element is Selected set element attributes
   if (selectedElement && options.selected.length === 1) {
@@ -292,8 +291,6 @@ export const handleCanvasSelectionCreated = ({
       console.log("No width or height");
       return;
     }
-
-    console.log("set activeObjectRef.current to", selectedElement);
     const scaledWidth = selectedElement?.scaleX
       ? selectedElement?.width * selectedElement?.scaleX
       : selectedElement?.width;

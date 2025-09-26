@@ -1,6 +1,6 @@
 // Define Liveblocks types for your application
 
-import { LiveMap } from "@liveblocks/client";
+import { LiveList, LiveMap } from "@liveblocks/client";
 
 // https://liveblocks.io/docs/api-reference/liveblocks-react#Typing-your-data
 declare global {
@@ -15,6 +15,7 @@ declare global {
     Storage: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       canvasObjects: LiveMap<string, any>;
+      zOrder: LiveList<string>;
     };
 
     // Custom user info set when authenticating with a secret key

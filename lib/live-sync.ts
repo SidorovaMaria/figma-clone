@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useStorage } from "@liveblocks/react";
 
-export const COLLAB_ENABLED = true; // flip to true when you want realtime collaboration
+export const COLLAB_ENABLED = false; // flip to true when you want realtime collaboration
 
 // live-sync shims
 export const useCanvasObjects = COLLAB_ENABLED

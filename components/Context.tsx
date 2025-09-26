@@ -28,6 +28,7 @@ const contextOptions = [
     name: "Components",
     shortcut: "⌘ + Alt + K",
   },
+  { name: "Show/Hide", shortcut: "⌘ + Alt + H" },
   {
     name: "Copy",
     shortcut: "⌘ + C",
@@ -40,6 +41,11 @@ const contextOptions = [
     name: "Cut",
     shortcut: "⌘ + X",
   },
+  {
+    name: "Send to back",
+    shortcut: "[",
+  },
+  { name: "Bring to front", shortcut: "]" },
 ];
 const Context = ({
   children,
@@ -100,6 +106,16 @@ const Context = ({
           {/* Only will use it when item is selected */}
           {itemSelected && (
             <>
+              {contextOptions.slice(10).map((option) => (
+                <ContextMenu.Item
+                  key={option.name}
+                  className="context-menu-item"
+                  onClick={() => handleMenuContextCanvasAction(option.name)}
+                >
+                  <p>{option.name}</p>
+                  <p className="text-text-muted">{option.shortcut}</p>
+                </ContextMenu.Item>
+              ))}
               <ContextMenu.Separator className="h-px bg-border my-1 mx-2" />
               <ContextMenu.Sub>
                 <ContextMenu.SubTrigger className="context-menu-item">
@@ -115,7 +131,7 @@ const Context = ({
               -translate-y-1/3 data-[state=open]:slide-from-left
               "
                   >
-                    {contextOptions.slice(7).map((option) => (
+                    {contextOptions.slice(7, 10).map((option) => (
                       <ContextMenu.Item
                         key={option.name}
                         className="context-menu-item"

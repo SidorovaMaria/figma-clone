@@ -4,7 +4,8 @@ import { ShortcutMap } from "@/hooks/useShortcut";
 import { ActiveElement } from "@/types/type";
 import { Canvas, FabricObject, util } from "fabric";
 import { v4 as uuidv4 } from "uuid";
-const OFFSET = 25;
+// Remove offset -> similar to how Figma does it
+const OFFSET = 0;
 
 export const handleCopy = (canvas: fabric.Canvas) => {
   const activeObjects = canvas.getActiveObjects();
@@ -45,7 +46,26 @@ export const handlePasteHere = async ({
         canvas.requestRenderAll();
       }
     } else {
-      //TODO LATER
+      //Due to the fact that once there are more active objects and their position stores relative to the active selection center we need to calculate the center of the active than poisiton the elemnt based on the center and the right click position
+      const activeSelectionCenterX = rightClickPosition.x;
+      const activeSelectionCenterY = rightClickPosition.y;
+      const objects = await util.enlivenObjects<FabricObject>(serialized.objects);
+      for (const obj of objects) {
+        // obj.left/top are relative to the original selection center
+        const relLeft = obj.left ?? 0;
+        const relTop = obj.top ?? 0;
+
+        const newLeft = activeSelectionCenterX + relLeft;
+        const newTop = activeSelectionCenterY + relTop;
+        obj.set({
+          left: newLeft + OFFSET,
+          top: newTop + OFFSET,
+          objectId: uuidv4(),
+        });
+
+        canvas.add(obj as any);
+        syncShapeInStorage(obj as any);
+      }
     }
   } catch (e) {
     console.error("Error parsing clipboard data:", e);
