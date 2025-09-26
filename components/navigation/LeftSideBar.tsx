@@ -10,10 +10,12 @@ const LeftSideBar = ({
   shapes,
   canvas,
   selectedElementRef,
+  syncShapeInStorage,
 }: {
   shapes: Array<any>;
   canvas: any;
   selectedElementRef: React.RefObject<any>;
+  syncShapeInStorage?: (shape: any) => void;
 }) => {
   const sel = () => {
     console.log("selectedElementRef", selectedElementRef.current);
@@ -34,6 +36,7 @@ const LeftSideBar = ({
               shape={shape}
               canvas={canvas}
               selectedElementRef={selectedElementRef}
+              syncShapeInStorage={syncShapeInStorage}
             />
           );
         })}
@@ -48,56 +51,73 @@ const ItemLayout = ({
   shape,
   canvas,
   selectedElementRef,
+  syncShapeInStorage,
 }: {
   shape: any;
   canvas: React.RefObject<Canvas>;
   selectedElementRef: React.RefObject<any>;
+  syncShapeInStorage: (shape: any) => void;
 }) => {
   const info = useMemo(() => getShapeInfo(shape[1]?.type), [shape]);
   const isSelected = useMemo(() => {
-    return selectedElementRef.current?.objectId === shape[1]?.objectId;
+    if (!selectedElementRef.current) return false;
+    if (Array.isArray(selectedElementRef.current)) {
+      for (let i = 0; i < selectedElementRef.current.length; i++) {
+        if (selectedElementRef.current[i]?.objectId === shape[1]?.objectId) {
+          return true;
+        }
+      }
+      return false;
+    }
   }, [selectedElementRef.current, shape]);
 
-  const [isVisible, setIsVisible] = React.useState(shape[1]?.visible);
+  const isVisible = useMemo(() => {
+    return shape[1]?.visible;
+  }, [shape]);
   const changeVisibility = (id: string) => {
     //@ts-expect-error objectId exists
     const object = canvas.current.getObjects().find((obj) => obj.objectId === id);
     if (object) {
-      object.set("visible", !object.visible);
+      object.toggle("visible");
       canvas.current.requestRenderAll();
+      syncShapeInStorage(object);
       return object.visible;
+    }
+  };
+  const selectElement = (objId: string) => {
+    const object = canvas.current.getObjects().find((o) => o.objectId === objId);
+    if (object) {
+      if (canvas.current.getActiveObject()) {
+        canvas.current.discardActiveObject();
+      }
+      canvas.current.setActiveObject(object);
+      selectedElementRef.current = [object];
+      canvas.current.requestRenderAll();
+    } else {
+      selectedElementRef.current = null;
+      canvas.current.discardActiveObject();
+      canvas.current.requestRenderAll();
     }
   };
   return (
     <div
       className={`group flex cursor-pointer items-center gap-3 rounded-md border border-transparent px-3 py-2 hover:border-text-muted/30 transition ease-in-out duration-150 ${
-        isSelected ? "bg-secondary border-text-muted/30" : ""
+        isSelected ? "bg-secondary/80 border-text-muted/30" : ""
       }
       `}
+      onClick={() => selectElement(shape[1]?.objectId)}
     >
       <Image src={info?.icon} alt="Layer" width={16} height={16} />
       <h3 className="text-sm font-semibold capitalize">{info.name}</h3>
       <button
         type="button"
         className="ml-auto p-2 rounded-md hover:bg-secondary transition ease-in-out duration-150 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          const vis = changeVisibility(shape[1]?.objectId);
+        }}
       >
-        {isVisible ? (
-          <EyeOpenIcon
-            onClick={(e) => {
-              e.stopPropagation();
-              const vis = changeVisibility(shape[1]?.objectId);
-              setIsVisible(vis);
-            }}
-          />
-        ) : (
-          <EyeClosedIcon
-            onClick={(e) => {
-              e.stopPropagation();
-              const vis = changeVisibility(shape[1]?.objectId);
-              setIsVisible(vis);
-            }}
-          />
-        )}
+        {isVisible ? <EyeOpenIcon /> : <EyeClosedIcon />}
       </button>
     </div>
   );

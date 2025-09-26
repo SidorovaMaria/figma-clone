@@ -20,7 +20,6 @@ export function Room({ children }: { children: ReactNode }) {
         }}
         initialStorage={{
           canvasObjects: new LiveMap(),
-          zOrder: new LiveList([]),
         }}
       >
         <ClientSideSuspense fallback={<div>Loading…</div>}>{children}</ClientSideSuspense>

@@ -52,8 +52,7 @@ export default function Home() {
    * from theliveblocks.config.ts
    */
   const canvasObjects = useStorage((root) => root.canvasObjects);
-  // const canvasObjects = useCanvasObjects(); // to avoid tooliveblock overuse
-  const zOrder = useStorage((root) => root.zOrder);
+  // const canvasObjects = useCanvasObjects();
 
   const syncShapeInStorage = useMutation(({ storage }, object) => {
     //Check if we have a valid object
@@ -90,7 +89,7 @@ export default function Home() {
   //     canvasObjects.set(objectId, dataShape);
   //   },
   //   []
-  // ); // To avoid too many liveblocks updates
+  // );
 
   /** canvasRef is a reference to the canvas element that we'll use to
    * initialize the fabric canvas.
@@ -310,8 +309,9 @@ export default function Home() {
     });
     canvas.on("selection:cleared", () => {
       if (isEditingRef.current) {
-        console.log("continue editing");
+        console.log("in the process of editing an element");
       } else {
+        console.log('disabling editing since "selection:cleared" fired');
         setDisableEditing(true);
         selectedElementRef.current = null;
       }
@@ -412,19 +412,16 @@ export default function Home() {
         const activeObjectBack = canvasBack?.getActiveObject();
         if (canvasBack && activeObjectBack) {
           canvasBack.sendObjectBackwards(activeObjectBack as any);
-          canvasBack?.requestRenderAll();
+          canvasBack.requestRenderAll();
         }
-
         break;
       case "Bring to front":
         const canvasFront = fabricRef.current;
         const activeObjectFront = canvasFront?.getActiveObject();
         if (canvasFront && activeObjectFront) {
           canvasFront.bringObjectForward(activeObjectFront as any);
-          canvasFront?.requestRenderAll();
-          console.log(canvasObjects);
+          canvasFront.requestRenderAll();
         }
-
         break;
       case "Show/Hide":
         const selectedObj = fabricRef.current?.getActiveObject();
@@ -455,11 +452,11 @@ export default function Home() {
       />
       <section className="flex h-full flex-row">
         <LeftSideBar
-          //@ts-expect-error ref type
           shapes={Array.from(canvasObjects)}
           //ts-expect-error ref type
           canvas={fabricRef}
           selectedElementRef={selectedElementRef}
+          syncShapeInStorage={syncShapeInStorage}
         />
 
         <Live

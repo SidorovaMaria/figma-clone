@@ -282,8 +282,9 @@ export const handleCanvasSelectionCreated = ({
   //if no elements selected, return
   if (!options?.selected) return;
   //Get Selected Element
-  selectedElementRef.current = options?.selected;
+
   const selectedElement = options?.selected[0] as FabricObject;
+  selectedElementRef.current = options?.selected as any;
 
   // If Only One Element is Selected set element attributes
   if (selectedElement && options.selected.length === 1) {
