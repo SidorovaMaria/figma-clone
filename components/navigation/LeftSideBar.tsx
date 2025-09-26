@@ -15,7 +15,7 @@ const LeftSideBar = ({
   shapes: Array<any>;
   canvas: any;
   selectedElementRef: React.RefObject<any>;
-  syncShapeInStorage?: (shape: any) => void;
+  syncShapeInStorage: (shape: any) => void;
 }) => {
   const sel = () => {
     console.log("selectedElementRef", selectedElementRef.current);
@@ -85,6 +85,7 @@ const ItemLayout = ({
     }
   };
   const selectElement = (objId: string) => {
+    //@ts-expect-error objectId exists
     const object = canvas.current.getObjects().find((o) => o.objectId === objId);
     if (object) {
       if (canvas.current.getActiveObject()) {
