@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import { LiveblocksProvider, RoomProvider, ClientSideSuspense } from "@liveblocks/react/suspense";
-import { LiveList, LiveMap } from "@liveblocks/client";
+import { LiveMap } from "@liveblocks/client";
 const publicApiKey = process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY;
 
 if (!publicApiKey) {

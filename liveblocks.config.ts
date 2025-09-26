@@ -1,6 +1,6 @@
 // Define Liveblocks types for your application
 
-import { LiveList, LiveMap } from "@liveblocks/client";
+import { LiveMap } from "@liveblocks/client";
 
 // https://liveblocks.io/docs/api-reference/liveblocks-react#Typing-your-data
 declare global {

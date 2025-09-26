@@ -117,7 +117,6 @@ export const handleDelete = (canvas: Canvas, deleteShapeFromStorage: (id: string
   const activeObjects = canvas.getActiveObjects();
   if (!activeObjects || activeObjects.length === 0) return;
   if (activeObjects.length > 0) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     activeObjects.forEach((obj: any) => {
       if (!obj.objectId) return;
       canvas.remove(obj);
@@ -161,17 +160,10 @@ export const toolBarShortcuts = (handleActiveElement: (element: ActiveElement) =
     Delete: (e) => {
       if (!isMod(e)) handleActiveElement(base.Delete);
     },
-    // Do not override Ctrl+R / Cmd+R to preserve browser refresh
-    // Do not override Ctrl+V / Cmd+V to preserve paste
-    // Do not override Ctrl+C / Cmd+C to preserve copy
-    // Do not override Ctrl+X / Cmd+X to preserve cut
-    // Do not override Ctrl+Z / Cmd+Z to preserve undo
-    // Do not override Ctrl+Y / Cmd+Y to preserve redo
   };
   return map;
 };
 type buildEditorBindingsArgs = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   canvas: Canvas | any;
   undo: () => void;
   redo: () => void;

@@ -8,7 +8,7 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import { NavigationMenu, Select } from "radix-ui";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 type ToolsBarProps = {
   activeElement: ActiveElement;
   handleActiveElement: (element: ActiveElement) => void;

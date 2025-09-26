@@ -1,6 +1,5 @@
 import * as React from "react";
 import { ContextMenu } from "radix-ui";
-import { shortcuts } from "@/constants";
 import { ChevronRightIcon } from "@radix-ui/react-icons";
 const contextOptions = [
   { name: "Paste here", shortcut: "" },
@@ -103,6 +102,7 @@ const Context = ({
           {/* Only will use it when item is selected */}
           {itemSelected && (
             <>
+              {/* TODO  implement bring front and back functionality  */}
               {/* {contextOptions.slice(10).map((option) => (
                 <ContextMenu.Item
                   key={option.name}

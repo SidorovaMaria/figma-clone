@@ -55,10 +55,11 @@ export type navElement = {
 };
 export type ActiveElement = Partial<navElement>;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface CustomFabricObject<T extends FabricObject> extends FabricObject {
   objectId?: string;
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface CustomFabricObject<T extends fabric.Object> extends fabric.Object {
   objectId?: string;
 }

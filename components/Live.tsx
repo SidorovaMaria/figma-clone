@@ -14,8 +14,6 @@ import ReactionSelector from "./reaction/ReactionSelector";
 import { CursorMode, CursorState } from "@/types/types";
 import { Reaction, ReactionEvent } from "@/types/type";
 import Context from "./Context";
-import { FabricObject } from "fabric";
-import { ContextMenu } from "radix-ui";
 
 type Props = {
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;

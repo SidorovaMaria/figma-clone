@@ -5,7 +5,7 @@ import NavBar from "@/components/navigation/NavBar";
 import LeftSideBar from "@/components/navigation/LeftSideBar";
 import RightSideBar from "@/components/navigation/RightSideBar";
 import { ActiveElement, Attributes } from "@/types/type";
-import { RefObject, use, useCallback, useEffect, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { Canvas, FabricObject } from "fabric";
 
 import {
@@ -33,7 +33,6 @@ import {
   handlePasteHere,
 } from "@/lib/key-events";
 import { useShortcut } from "@/hooks/useShortcut";
-import { fastEqual, useCanvasObjects, useSyncMutation } from "@/lib/live-sync";
 
 export default function Home() {
   /**
@@ -52,7 +51,7 @@ export default function Home() {
    * from theliveblocks.config.ts
    */
   const canvasObjects = useStorage((root) => root.canvasObjects);
-  // const canvasObjects = useCanvasObjects();
+  // const canvasObjects = useCanvasObjects(); \\\Set up selector to limit liveblocks usage
 
   const syncShapeInStorage = useMutation(({ storage }, object) => {
     //Check if we have a valid object
@@ -65,6 +64,7 @@ export default function Home() {
     const canvasObjects = storage.get("canvasObjects");
     canvasObjects.set(objectId, dataShape);
   }, []);
+  //Set up mutation to update the shape in the storage when it is modified to avoid overusing liveblocks quota
   // const syncShapeInStorage = useSyncMutation(
   //   //@ts-expect-error just for limiting liveblock update puposes
   //   ({ storage }, object: any /* FabricObject | null */) => {
@@ -166,7 +166,7 @@ export default function Home() {
   const deleteAllShapes = useMutation(({ storage }) => {
     const canvasObjects = storage.get("canvasObjects");
     if (!canvasObjects || canvasObjects.size === 0) return true;
-    for (const [key, value] of canvasObjects.entries()) {
+    for (const [key] of canvasObjects.entries()) {
       canvasObjects.delete(key);
     }
     return canvasObjects.size === 0;
@@ -431,6 +431,7 @@ export default function Home() {
           syncShapeInStorage(selectedObj as any);
         }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -453,7 +454,6 @@ export default function Home() {
       <section className="flex h-full flex-row">
         <LeftSideBar
           shapes={Array.from(canvasObjects)}
-          //ts-expect-error ref type
           canvas={fabricRef}
           selectedElementRef={selectedElementRef}
           syncShapeInStorage={syncShapeInStorage}

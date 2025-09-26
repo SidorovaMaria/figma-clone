@@ -3,7 +3,6 @@ import { getShapeInfo } from "@/lib/utils";
 import { Canvas } from "fabric";
 import Image from "next/image";
 import React, { useMemo } from "react";
-import ConfirmResetModal from "../modals/ConfirmResetModal";
 import { EyeClosedIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 
 const LeftSideBar = ({
@@ -69,7 +68,7 @@ const ItemLayout = ({
       }
       return false;
     }
-  }, [selectedElementRef.current, shape]);
+  }, [selectedElementRef, shape]);
 
   const isVisible = useMemo(() => {
     return shape[1]?.visible;
@@ -115,7 +114,7 @@ const ItemLayout = ({
         className="ml-auto p-2 rounded-md hover:bg-secondary transition ease-in-out duration-150 cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
-          const vis = changeVisibility(shape[1]?.objectId);
+          changeVisibility(shape[1]?.objectId);
         }}
       >
         {isVisible ? <EyeOpenIcon /> : <EyeClosedIcon />}

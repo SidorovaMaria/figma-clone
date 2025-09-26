@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  ActiveElement,
   CanvasMouseDown,
   CanvasMouseMove,
   CanvasMouseUp,
@@ -10,7 +9,7 @@ import {
   CanvasSelectionUpdated,
   RenderCanvasArgs,
 } from "@/types/type";
-import { Canvas, FabricObject, PencilBrush, Point, util } from "fabric";
+import { Canvas, FabricObject, PencilBrush, util } from "fabric";
 
 import { createFabricShape } from "./shapes";
 
@@ -66,7 +65,6 @@ export const renderCanvas = async ({
   }
 
   if (objectToActivate) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     canvas.setActiveObject(objectToActivate as any);
   }
 
@@ -128,14 +126,9 @@ export const handleCanvasMouseDown = ({
     target.setCoords();
   } else {
     isDrawing.current = true;
-
-    // create custom fabric object/shape and set it to shapeRef
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     shapeRef.current = createFabricShape(selectedShapeRef.current, pointer as any);
-
     // if shapeRef is not null, add it to canvas
     if (shapeRef.current) {
-      // add: http://fabricjs.com/docs/fabric.Canvas.html#add
       canvas.add(shapeRef.current);
     }
   }
