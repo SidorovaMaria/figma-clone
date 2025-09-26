@@ -25,15 +25,22 @@ As well as edit their properties seamlessly_.
 The main idea of the project was provided by [this tutorial](https://www.youtube.com/watch?v=oKIThIihv60&t=11666s) by [JavaScript Mastery](https://www.youtube.com/@JavaScriptMastery) and then I expanded it with more features and my own improvements.
 
 ## <a name="tech-stack">⚙️ Tech Stack</a>
+<img alt="Static Badge" src="https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white"><img alt="Static Badge" src="https://img.shields.io/badge/Typescript-blue?style=for-the-badge&logo=typescript&logoColor=white"><img alt="Static Badge" src="https://img.shields.io/badge/TailwindCSS-blue?style=for-the-badge&logo=tailwindcss&logoColor=white"><img alt="Static Badge" src="https://img.shields.io/badge/RadixUI-black?style=for-the-badge&logo=radixui&logoColor=white"><img alt="Static Badge" src="https://img.shields.io/badge/LiveBlocks-black?style=for-the-badge&logo=liveblocks"><img alt="Static Badge" src="https://img.shields.io/badge/FabricJs-blue?style=for-the-badge&logo=liveblocks">
+
+<img alt="Static Badge" src="https://img.shields.io/badge/Vercel-black?style=for-the-badge&logo=vercel&logoColor=white">
+
+
+
+
 
 <ul style="list-style-type:circle; font-size:16px; font-weight:600; line-height:2;">
-<li style='display:flex; gap:12px; align-items:center;'><img src='./public/readme-icons/nextjs.svg' style="width:20; height:20"/>Next.js </li>
-<li style='display:flex; gap:12px; align-items:center;'><img src='./public/readme-icons/typescript.svg' style="width:20; height:20"/>TypeScript </li>
-<li style='display:flex; gap:12px; align-items:center;'><img src='./public/readme-icons/tailwindcss.svg' style="width:20; height:20"/>Tailwind CSS </li>
-<li style='display:flex; gap:12px; align-items:center;'><img src='./public/readme-icons/radix-ui.png' style="width:20; height:20"/>Radix UI </li>
-<li style='display:flex; gap:12px; align-items:center;'><img src='./public/readme-icons/liveblocks.svg'  style="width:65; height:20; filter:invert(1)"/>Liveblocks </li>
-<li style='display:flex; gap:12px; align-items:center;'><img src='./public/readme-icons/fabricjs.svg' style="width:65; height:20; filter:invert(1)"/>Fabric.JS </li>
-<li style='display:flex; gap:12px; align-items:center;'>Vercel <img src='./public/readme-icons/vercel.svg' style="width:20; height:20; filter:invert(1)"/></li>
+<li style='display:flex; gap:12px; align-items:center;'> Next.js </li>
+<li style='display:flex; gap:12px; align-items:center;'>TypeScript </li>
+<li style='display:flex; gap:12px; align-items:center;'>Tailwind CSS </li>
+<li style='display:flex; gap:12px; align-items:center;'>Radix UI </li>
+<li style='display:flex; gap:12px; align-items:center;'>Liveblocks </li>
+<li style='display:flex; gap:12px; align-items:center;'>Fabric.JS </li>
+<li style='display:flex; gap:12px; align-items:center;'>Vercel</li>
 </ul>
 
 # <a name="features">🔋 Features</a>
@@ -291,3 +298,4 @@ To get started with the project, follow these steps:
 - [Fabric.JS](https://fabricjs.com/) for the powerful canvas rendering and manipulation library.
 - [Radix UI](https://www.radix-ui.com/) for the accessible and customizable UI components.
 - <a href="https://www.flaticon.com/free-icons/graphic-design" title="graphic design icons">Graphic design icons created by Freepik - Flaticon</a> - for the Logo used in the project.
+
